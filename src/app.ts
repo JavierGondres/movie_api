@@ -1,22 +1,15 @@
-import { MongoClient } from "mongodb";
- 
-// Replace the following with your Atlas connection string                                                                                                                                   
-const url = "mongodb+srv://testUser:testUser22@cluster0.7uxpn75.mongodb.net/?retryWrites=true&w=majority";
-console.log('hola')
-// Connect to your Atlas cluster
-const client = new MongoClient(url);
+import express, { json } from "express";                                                                                                                              
 
-async function run() {
-    try {
-        await client.connect();
-        console.log("Successfully connected to Atlas");
+export const createApp = () => {
+    const app = express();
+    app.use(json());
+    app.disable("x-powered-by")
 
-    } catch (err: any) {
-        console.log(err.stack);
-    }
-    finally {
-        await client.close();
-    }
+    const PORT = process.env.PORT ?? 1234
+
+    app.listen(PORT, () => {
+        console.log(`Server is listening on port http://localhost:${PORT}`)
+    })
 }
 
-run().catch(console.dir);
+createApp()
