@@ -9,4 +9,5 @@ var DBCollections;
 (function (DBCollections) {
     DBCollections["USERS"] = "Users";
     DBCollections["MOVIES"] = "Movies";
+    DBCollections["ROLES"] = "Roles";
 })(DBCollections || (exports.DBCollections = DBCollections = {}));

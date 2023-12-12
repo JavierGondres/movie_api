@@ -2,6 +2,7 @@ export interface Users {
     _id: string;
     userName: string;
     userEmail: string;
+    userPassword: string | number;
     userType: string;
 }
 

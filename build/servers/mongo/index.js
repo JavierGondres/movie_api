@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = require("../..");
+const auth_1 = require("../../models/mongo/auth");
 const users_1 = require("../../models/mongo/users");
-(0, __1.createApp)({ userModel: users_1.UserModel });
+(0, __1.createApp)({ userModel: users_1.UserModel, authModel: auth_1.AuthModel });

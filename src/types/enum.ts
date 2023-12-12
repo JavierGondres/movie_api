@@ -4,5 +4,6 @@ export enum DB {
 
 export enum DBCollections {
     USERS = 'Users',
-    MOVIES = 'Movies'
+    MOVIES = 'Movies',
+    ROLES = 'Roles'
 }
