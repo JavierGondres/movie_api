@@ -12,36 +12,34 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MovieModel = exports.run = void 0;
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const mongodb_1 = require("mongodb");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-const uri = process.env.CONNECTION_STRING;
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-    serverApi: {
-        version: ServerApiVersion.v1,
-        strict: true,
-        deprecationErrors: true,
-    }
-});
-function run() {
+const uri = process.env.CONNECTION_STRING || "";
+function connect() {
     return __awaiter(this, void 0, void 0, function* () {
+        console.log({ uri });
+        const client = new mongodb_1.MongoClient(uri, {
+            serverApi: {
+                version: mongodb_1.ServerApiVersion.v1,
+                strict: true,
+                deprecationErrors: true,
+            },
+        });
         try {
-            // Connect the client to the server	(optional starting in v4.7)
             yield client.connect();
-            // Send a ping to confirm a successful connection
-            yield client.db("admin").command({ ping: 1 });
             console.log("Pinged your deployment. You successfully connected to MongoDB!");
+            return client.db("movie_api");
+            //   const movies = db.collection<Movies>("Movies");
+            //   const users = db.collection<Users>("Users");
+            //   return { client, db, movies, users };
         }
-        finally {
-            // Ensures that the client will close when you finish/error
+        catch (error) {
+            console.error("Error connecting to the database");
+            console.error(error);
             yield client.close();
+            throw error;
         }
     });
 }
-exports.run = run;
-run().catch(console.dir);
-class MovieModel {
-}
-exports.MovieModel = MovieModel;
+exports.default = connect;

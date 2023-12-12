@@ -34,17 +34,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createApp = void 0;
 const express_1 = __importStar(require("express"));
-require(".");
+const MongoSingleton_1 = require("./services/MongoSingleton");
 const createApp = () => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const app = (0, express_1.default)();
     app.use((0, express_1.json)());
     app.disable("x-powered-by");
     const PORT = (_a = process.env.PORT) !== null && _a !== void 0 ? _a : 1234;
-    console.log('holaaa');
     app.get('/', (_req, res) => {
         res.send('Hola');
     });
+    const db = MongoSingleton_1.MongoSingleton.getClient().db("movie_api");
+    console.log(yield db.collection("Users").find({}).toArray());
     app.listen(PORT, () => {
         console.log(`Server is listening on port http://localhost:${PORT}`);
     });
