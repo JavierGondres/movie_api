@@ -10,29 +10,43 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
+const generateJWT_1 = require("../../middleware/generateJWT");
+const enum_1 = require("../../types/enum");
 class AuthController {
     constructor({ authModel }) {
         this.signUp = (_req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { userEmail, userName, userPassword, userType } = _req.body;
-            console.log({ userName, userEmail, userPassword, userType });
+            const { userEmail, userName, userPassword, userRole } = _req.body;
+            console.log({ userName, userEmail, userPassword, userRole });
+            userRole ? enum_1.Roles.USER : userRole;
             try {
-                const tokenId = yield this.authModel.signUp({
-                    userEmail,
+                const { error, userAccesToken } = yield (0, generateJWT_1.generateJWT)({
                     userName,
-                    userPassword,
-                    userType,
+                    userRole,
                 });
-                if (!tokenId) {
-                    console.log(tokenId);
+                if (error) {
+                    return res.status(500).json({
+                        error: true,
+                        message: "Couldn't create access token. Please try again later.",
+                    });
+                }
+                const result = yield this.authModel.signUp({
+                    userName,
+                    userEmail,
+                    userPassword,
+                    userRole,
+                    userAccesToken,
+                });
+                if (!result) {
                     return res
                         .status(500)
                         .json({ ErrorMessag: "Hubo un error en el servidor" });
                 }
-                return res.status(200).json(tokenId);
+                console.log({ userAccesToken: userAccesToken });
+                return res.status(200).json(result);
             }
             catch (e) {
                 console.log(e);
-                return res.status(501).json({ MessageError: e });
+                return res.status(501).json({ erroMessage: "Somethin went wrong in our server, try again later" });
             }
         });
         this.authModel = authModel;

@@ -5,5 +5,9 @@ export enum DB {
 export enum DBCollections {
     USERS = 'Users',
     MOVIES = 'Movies',
-    ROLES = 'Roles'
+}
+
+export enum Roles {
+    ADMIN = 'Admin',
+    USER = 'User'
 }

@@ -3,7 +3,8 @@ export interface Users {
     userName: string;
     userEmail: string;
     userPassword: string | number;
-    userType: string;
+    userAccesToken: string;
+    userRole: string;
 }
 
 export interface Movies {

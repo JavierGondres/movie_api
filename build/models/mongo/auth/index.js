@@ -16,30 +16,26 @@ exports.AuthModel = void 0;
 const MongoSingleton_1 = require("../../../services/MongoSingleton");
 const enum_1 = require("../../../types/enum");
 // import bcrypt from "bcryptjs"
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-const db = MongoSingleton_1.MongoSingleton.getClient().db(enum_1.DB.movie_api).collection(enum_1.DBCollections.USERS);
-// const roles = MongoSingleton.getClient().db(DB.movie_api).collection(DBCollections.ROLES)
+const db = MongoSingleton_1.MongoSingleton.getClient()
+    .db(enum_1.DB.movie_api)
+    .collection(enum_1.DBCollections.USERS);
 class AuthModel {
-    static signUp({ userName, userEmail, userType, userPassword }) {
+    static signUp({ userName, userEmail, userPassword, userRole, userAccesToken }) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('Sign');
+                console.log("Sign");
+                console.log({ tokenModel: userAccesToken });
                 const newUser = {
                     userName: userName,
                     userEmail: userEmail,
                     userPassword: userPassword,
-                    userType: userType !== null && userType !== void 0 ? userType : 'User'
+                    userAccesToken: userAccesToken,
+                    userRole: userRole !== null && userRole !== void 0 ? userRole : "User",
                 };
-                // if(userType) {
-                //     const foundRoles = await roles.find({roleType: {$in: userType}})
-                // }
                 const result = yield db.insertOne(newUser);
-                const token = jsonwebtoken_1.default.sign({ id: result.insertedId }, process.env.JWT || '', {
-                    expiresIn: 86400 //equivale a 24 hrs
-                });
-                return token;
+                return result.insertedId;
             }
             catch (error) {
                 console.log(error);
