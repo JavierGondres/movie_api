@@ -8,6 +8,6 @@ export enum DBCollections {
 }
 
 export enum Roles {
-    ADMIN = 'Admin',
-    USER = 'User'
+    ADMIN = 'admin',
+    USER = 'user'
 }

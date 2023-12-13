@@ -7,12 +7,9 @@ export const createApp = async ({ userModel, authModel, db }: any) => {
    app.use(json());
    app.disable("x-powered-by");
 
-   
    app.use("/users", createUserRouter({ userModel: userModel, db: db }));
    app.use("/auth", createAuthRouter({ authModel: authModel }));
 
-   
-   
    const PORT = process.env.PORT ?? 1234;
    app.listen(PORT, () => {
       console.log(`Server is listening on port http://localhost:${PORT}`);

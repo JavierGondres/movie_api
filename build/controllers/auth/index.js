@@ -16,8 +16,6 @@ class AuthController {
     constructor({ authModel }) {
         this.signUp = (_req, res) => __awaiter(this, void 0, void 0, function* () {
             const { userEmail, userName, userPassword, userRole } = _req.body;
-            console.log({ userName, userEmail, userPassword, userRole });
-            userRole ? enum_1.Roles.USER : userRole;
             try {
                 const { error, userAccesToken } = yield (0, generateJWT_1.generateJWT)({
                     userName,
@@ -33,7 +31,7 @@ class AuthController {
                     userName,
                     userEmail,
                     userPassword,
-                    userRole,
+                    userRole: userRole || enum_1.Roles.USER,
                     userAccesToken,
                 });
                 if (!result) {
@@ -46,7 +44,9 @@ class AuthController {
             }
             catch (e) {
                 console.log(e);
-                return res.status(501).json({ erroMessage: "Somethin went wrong in our server, try again later" });
+                return res.status(501).json({
+                    erroMessage: "Somethin went wrong in our server, try again later",
+                });
             }
         });
         this.authModel = authModel;

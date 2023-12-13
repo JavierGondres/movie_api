@@ -12,6 +12,6 @@ var DBCollections;
 })(DBCollections || (exports.DBCollections = DBCollections = {}));
 var Roles;
 (function (Roles) {
-    Roles["ADMIN"] = "Admin";
-    Roles["USER"] = "User";
+    Roles["ADMIN"] = "admin";
+    Roles["USER"] = "user";
 })(Roles || (exports.Roles = Roles = {}));
