@@ -12,53 +12,53 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateToken = void 0;
+exports.ValidateToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const MongoSingleton_1 = require("../../services/MongoSingleton");
-const enum_1 = require("../../types/enum");
-const users = MongoSingleton_1.MongoSingleton.getClient()
-    .db(enum_1.DB.movie_api)
-    .collection(enum_1.DBCollections.USERS);
-const validateToken = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const auhorizationHeader = req.headers.authorization;
-    let result;
-    if (!auhorizationHeader) {
-        return res.status(401).json({
-            error: true,
-            message: "Access token is missing",
-        });
-    }
-    const token = auhorizationHeader.split(" ")[1];
-    try {
-        let user = (yield users.findOne({
-            userAccesToken: token,
-        }));
-        if (!user) {
-            result = {
-                error: true,
-                message: "Authorization error",
-            };
-            return res.status(403).json(result);
-        }
-        result = jsonwebtoken_1.default.verify(token || "", process.env.JWT || "", (err, decoded) => {
-            if (err) {
-                return res.status(403).json({ message: "Forbidden r37226" });
-            }
-            if (!(user === null || user === void 0 ? void 0 : user.userName) === decoded.userName) {
-                result = {
+class ValidateToken {
+    constructor(userCollection) {
+        this.validateToken = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            const auhorizationHeader = req.headers.authorization;
+            let result;
+            if (!auhorizationHeader) {
+                return res.status(401).json({
                     error: true,
-                    message: "Invalid token",
-                };
-                return res.status(401).json(result);
+                    message: "Access token is missing",
+                });
             }
-            req.decodedUserName = decoded.userName;
-            req.decodedUserRole = decoded.userRole;
-            next();
+            const token = auhorizationHeader.split(" ")[1];
+            try {
+                let user = (yield this.userCollection.findOne({
+                    userAccesToken: token,
+                }));
+                if (!user) {
+                    result = {
+                        error: true,
+                        message: "Authorization error",
+                    };
+                    return res.status(403).json(result);
+                }
+                result = jsonwebtoken_1.default.verify(token || "", process.env.JWT || "", (err, decoded) => {
+                    if (err) {
+                        return res.status(403).json({ message: "Forbidden r37226" });
+                    }
+                    if (!(user === null || user === void 0 ? void 0 : user.userName) === decoded.userName) {
+                        result = {
+                            error: true,
+                            message: "Invalid token",
+                        };
+                        return res.status(401).json(result);
+                    }
+                    req.decodedUserName = decoded.userName;
+                    req.decodedUserRole = decoded.userRole;
+                    next();
+                });
+            }
+            catch (error) {
+                console.log({ errorMessage: error });
+                return res.status(500).json({ message: "Something went wrong" });
+            }
         });
+        this.userCollection = userCollection;
     }
-    catch (error) {
-        console.log({ errorMessage: error });
-        return res.status(500).json({ message: "Something went wrong" });
-    }
-});
-exports.validateToken = validateToken;
+}
+exports.ValidateToken = ValidateToken;

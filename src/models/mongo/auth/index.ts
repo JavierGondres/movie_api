@@ -1,28 +1,30 @@
-import { MongoSingleton } from "../../../services/MongoSingleton";
-import { DB, DBCollections } from "../../../types/enum";
+import { Collection, ObjectId, Document } from "mongodb";
 import { Users } from "../types";
 // import bcrypt from "bcryptjs"
 import dotenv from "dotenv";
 dotenv.config();
 
-const db = MongoSingleton.getClient()
-   .db(DB.movie_api)
-   .collection(DBCollections.USERS);
 
 export class AuthModel {
-   static async signUp({ userName, userEmail, userPassword, userRole, userAccesToken }: Users) {
+
+    private userCollection: Collection<Document>;
+    constructor(userCollection: Collection<Document>) {
+        this.userCollection = userCollection;
+      }
+
+   async signUp({ userName, userEmail, userPassword, userRole, userAccesToken }: Users) {
       try {
          console.log("Sign");
          console.log({tokenModel: userAccesToken})
-         const newUser = {
+         const newUser: Partial<Document & { _id?: ObjectId }> = {
             userName: userName,
             userEmail: userEmail,
             userPassword: userPassword,
             userAccesToken: userAccesToken,
             userRole: userRole ?? "User",
-         };
+        };
 
-         const result = await db.insertOne(newUser);
+         const result = await this.userCollection.insertOne(newUser);
 
          return result.insertedId
 

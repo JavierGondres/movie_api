@@ -1,8 +1,7 @@
 import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
-import { MongoSingleton } from "../../services/MongoSingleton";
-import { DB, DBCollections } from "../../types/enum";
 import { Users } from "../../models/mongo/types";
+import { Collection, Document } from "mongodb";
 
 declare module "express" {
    interface Request {
@@ -11,63 +10,61 @@ declare module "express" {
    }
 }
 
-const users = MongoSingleton.getClient()
-   .db(DB.movie_api)
-   .collection(DBCollections.USERS);
-
-export const validateToken = async (
-   req: Request,
-   res: Response,
-   next: () => void
-) => {
-   const auhorizationHeader = req.headers.authorization;
-   let result: any;
-
-   if (!auhorizationHeader) {
-      return res.status(401).json({
-         error: true,
-         message: "Access token is missing",
-      });
+export class ValidateToken {
+   private userCollection: Collection<Document>;
+   constructor(userCollection: Collection<Document>) {
+      this.userCollection = userCollection;
    }
 
-   const token = auhorizationHeader.split(" ")[1];
+    validateToken = async(req: Request, res: Response, next: () => void) => {
+      const auhorizationHeader = req.headers.authorization;
+      let result: any;
 
-   try {
-      let user: Users | null = (await users.findOne({
-         userAccesToken: token,
-      })) as Users | null;
-
-      if (!user) {
-         result = {
+      if (!auhorizationHeader) {
+         return res.status(401).json({
             error: true,
-            message: "Authorization error",
-         };
-
-         return res.status(403).json(result);
+            message: "Access token is missing",
+         });
       }
 
-      result = jwt.verify(
-         token || "",
-         process.env.JWT || "",
-         (err: any, decoded: any) => {
-            if (err) {
-               return res.status(403).json({ message: "Forbidden r37226" });
-            }
-            if (!user?.userName === decoded.userName) {
-               result = {
-                  error: true,
-                  message: "Invalid token",
-               };
+      const token = auhorizationHeader.split(" ")[1];
+      try {
+         let user: Users | null = (await this.userCollection.findOne({
+            userAccesToken: token,
+         })) as Users | null;
 
-               return res.status(401).json(result);
-            }
-            req.decodedUserName = decoded.userName;
-            req.decodedUserRole = decoded.userRole;
-            next();
+         if (!user) {
+            result = {
+               error: true,
+               message: "Authorization error",
+            };
+
+            return res.status(403).json(result);
          }
-      );
-   } catch (error) {
-      console.log({ errorMessage: error });
-      return res.status(500).json({ message: "Something went wrong" });
+
+         result = jwt.verify(
+            token || "",
+            process.env.JWT || "",
+            (err: any, decoded: any) => {
+               if (err) {
+                  return res.status(403).json({ message: "Forbidden r37226" });
+               }
+               if (!user?.userName === decoded.userName) {
+                  result = {
+                     error: true,
+                     message: "Invalid token",
+                  };
+
+                  return res.status(401).json(result);
+               }
+               req.decodedUserName = decoded.userName;
+               req.decodedUserRole = decoded.userRole;
+               next();
+            }
+         );
+      } catch (error) {
+         console.log({ errorMessage: error });
+         return res.status(500).json({ message: "Something went wrong" });
+      }
    }
-};
+}

@@ -10,16 +10,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserModel = void 0;
-const MongoSingleton_1 = require("../../../services/MongoSingleton");
-const enum_1 = require("../../../types/enum");
-const db = MongoSingleton_1.MongoSingleton.getClient().db(enum_1.DB.movie_api).collection(enum_1.DBCollections.USERS);
 class UserModel {
-    static getAll() {
+    constructor(userCollection) {
+        this.userCollection = userCollection;
+    }
+    getAll() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const users = yield db.find({}).toArray();
+                const users = yield this.userCollection.find({}).toArray();
                 console.log(users);
-                return (users);
+                return users;
             }
             catch (error) {
                 return null;

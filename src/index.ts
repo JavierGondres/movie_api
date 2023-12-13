@@ -2,13 +2,13 @@ import express, { json } from "express";
 import { createUserRouter } from "./routes/users";
 import { createAuthRouter } from "./routes/auth";
 
-export const createApp = async ({ userModel, authModel }: any) => {
+export const createApp = async ({ userModel, authModel, db }: any) => {
    const app = express();
    app.use(json());
    app.disable("x-powered-by");
 
    
-   app.use("/users", createUserRouter({ userModel: userModel }));
+   app.use("/users", createUserRouter({ userModel: userModel, db: db }));
    app.use("/auth", createAuthRouter({ authModel: authModel }));
 
    
