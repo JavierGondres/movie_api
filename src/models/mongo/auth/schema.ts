@@ -23,3 +23,21 @@ export const signUpSchema = [
       .withMessage("Invalid role")
       .optional(),
 ];
+
+export const signInSchema = [
+   body("userEmail")
+      .notEmpty()
+      .withMessage("email is required")
+      .isEmail()
+      .withMessage("invalid email"),
+   body("userPassword")
+      .isLength({ min: 6 })
+      .withMessage("password too short")
+      .notEmpty()
+      .withMessage("password is required"),
+   body("userAccesToken")
+      .isString()
+      .withMessage("Token must be a string")
+      .notEmpty()
+      .withMessage("Token is required"),
+ ];

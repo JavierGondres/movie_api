@@ -8,7 +8,8 @@ const validateData_1 = require("../../middleware/validateData");
 const createAuthRouter = ({ authModel }) => {
     const authRouter = (0, express_1.Router)();
     const authController = new auth_1.AuthController({ authModel });
-    authRouter.post("/", (0, validateData_1.validateData)(schema_1.signUpSchema), authController.signUp);
+    authRouter.post("/signIn", (0, validateData_1.validateData)(schema_1.signInSchema), authController.signIn);
+    authRouter.post("/signUp", (0, validateData_1.validateData)(schema_1.signUpSchema), authController.signUp);
     return authRouter;
 };
 exports.createAuthRouter = createAuthRouter;

@@ -1,6 +1,6 @@
 import { Collection, ObjectId, Document } from "mongodb";
 import { Users } from "../types";
-import bcrypt from "bcrypt"
+import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -18,7 +18,7 @@ export class AuthModel {
       userAccesToken,
    }: Users) {
       let message;
-      const passwordHash = await bcrypt.hash(userPassword.toString(), 8)
+      const passwordHash = await bcrypt.hash(userPassword.toString(), 8);
       try {
          console.log("Sign");
 
@@ -52,6 +52,42 @@ export class AuthModel {
       } catch (error) {
          console.log(error);
          message = "Something went wrong";
+         return {
+            error: true,
+            message: message,
+         };
+      }
+   }
+
+   async signIn({ userEmail, userPassword, userAccesToken }: Users) {
+      let message;
+      let existUser
+      try {
+         existUser = await this.userCollection.findOne({
+            userEmail: userEmail,
+            userPassword: userPassword,
+            userAccesToken: userAccesToken,
+         });
+
+         if (!existUser) {
+            message = "User doesnt exist";
+            return {
+               error: true,
+               message: message,
+            };
+         }
+         else{
+            message = "User exist";
+            return {
+               error: false,
+               message: message,
+            };
+         }
+
+
+      } catch (error) {
+         console.log(error)
+         message = "Something went wron in sign in, getting user";
          return {
             error: true,
             message: message,

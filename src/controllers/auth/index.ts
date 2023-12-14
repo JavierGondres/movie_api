@@ -8,8 +8,35 @@ export class AuthController {
       this.authModel = authModel;
    }
 
-   signUp = async (_req: Request, res: Response) => {
-      const { userEmail, userName, userPassword, userRole } = _req.body;
+   signIn = async (req: Request, res: Response) => {
+      const { userEmail, userPassword, userAccesToken } = req.body;
+      let result: {
+         error: boolean;
+         message: string;
+      } = {
+         error: false,
+         message: "Something went wrong",
+      };
+
+      try {
+         result = await this.authModel.signIn({
+            userEmail,
+            userPassword,
+            userAccesToken,
+         });
+
+         if (result.error) return res.status(400).json(result);
+
+         console.log(req.body);
+         return res.status(200).json(result.message);
+      } catch (e) {
+         console.log(e);
+         return res.status(501).json(result);
+      }
+   };
+
+   signUp = async (req: Request, res: Response) => {
+      const { userEmail, userName, userPassword, userRole } = req.body;
       let result: {
          error: boolean;
          message: string;

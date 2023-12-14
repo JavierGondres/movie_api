@@ -60,5 +60,40 @@ class AuthModel {
             }
         });
     }
+    signIn({ userEmail, userPassword, userAccesToken }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let message;
+            let existUser;
+            try {
+                existUser = yield this.userCollection.findOne({
+                    userEmail: userEmail,
+                    userPassword: userPassword,
+                    userAccesToken: userAccesToken,
+                });
+                if (!existUser) {
+                    message = "User doesnt exist";
+                    return {
+                        error: true,
+                        message: message,
+                    };
+                }
+                else {
+                    message = "User exist";
+                    return {
+                        error: false,
+                        message: message,
+                    };
+                }
+            }
+            catch (error) {
+                console.log(error);
+                message = "Something went wron in sign in, getting user";
+                return {
+                    error: true,
+                    message: message,
+                };
+            }
+        });
+    }
 }
 exports.AuthModel = AuthModel;
