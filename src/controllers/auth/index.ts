@@ -10,6 +10,13 @@ export class AuthController {
 
    signUp = async (_req: Request, res: Response) => {
       const { userEmail, userName, userPassword, userRole } = _req.body;
+      let result: {
+         error: boolean;
+         message: string;
+      } = {
+         error: false,
+         message: "",
+      };
 
       try {
          const { error, userAccesToken } = await generateJWT({
@@ -24,7 +31,7 @@ export class AuthController {
             });
          }
 
-         const result = await this.authModel.signUp({
+         result = await this.authModel.signUp({
             userName,
             userEmail,
             userPassword,
@@ -32,19 +39,13 @@ export class AuthController {
             userAccesToken,
          });
 
-         if (!result) {
-            return res
-               .status(500)
-               .json({ ErrorMessag: "Hubo un error en el servidor" });
-         }
+         if (result.error) return res.status(400).json(result);
 
          console.log({ userAccesToken: userAccesToken });
-         return res.status(200).json(result);
+         return res.status(200).json(result.message);
       } catch (e) {
          console.log(e);
-         return res.status(501).json({
-            erroMessage: "Somethin went wrong in our server, try again later",
-         });
+         return res.status(501).json(result);
       }
    };
 }

@@ -20,11 +20,21 @@ class AuthModel {
     constructor(userCollection) {
         this.userCollection = userCollection;
     }
-    signUp({ userName, userEmail, userPassword, userRole, userAccesToken }) {
+    signUp({ userName, userEmail, userPassword, userRole, userAccesToken, }) {
         return __awaiter(this, void 0, void 0, function* () {
+            let message;
             try {
                 console.log("Sign");
-                console.log({ tokenModel: userAccesToken });
+                const existUser = yield this.userCollection.findOne({
+                    userEmail: userEmail,
+                });
+                if (existUser) {
+                    message = "Email in usage";
+                    return {
+                        error: true,
+                        message: message,
+                    };
+                }
                 const newUser = {
                     userName: userName,
                     userEmail: userEmail,
@@ -32,12 +42,20 @@ class AuthModel {
                     userAccesToken: userAccesToken,
                     userRole: userRole !== null && userRole !== void 0 ? userRole : "User",
                 };
-                const result = yield this.userCollection.insertOne(newUser);
-                return result.insertedId;
+                yield this.userCollection.insertOne(newUser);
+                message = "User created";
+                return {
+                    error: false,
+                    message: message,
+                };
             }
             catch (error) {
                 console.log(error);
-                return null;
+                message = "Something went wrong";
+                return {
+                    error: true,
+                    message: message,
+                };
             }
         });
     }

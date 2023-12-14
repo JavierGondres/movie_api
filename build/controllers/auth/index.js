@@ -16,6 +16,10 @@ class AuthController {
     constructor({ authModel }) {
         this.signUp = (_req, res) => __awaiter(this, void 0, void 0, function* () {
             const { userEmail, userName, userPassword, userRole } = _req.body;
+            let result = {
+                error: false,
+                message: "",
+            };
             try {
                 const { error, userAccesToken } = yield (0, generateJWT_1.generateJWT)({
                     userName,
@@ -27,26 +31,21 @@ class AuthController {
                         message: "Couldn't create access token. Please try again later.",
                     });
                 }
-                const result = yield this.authModel.signUp({
+                result = yield this.authModel.signUp({
                     userName,
                     userEmail,
                     userPassword,
                     userRole: userRole || enum_1.Roles.USER,
                     userAccesToken,
                 });
-                if (!result) {
-                    return res
-                        .status(500)
-                        .json({ ErrorMessag: "Hubo un error en el servidor" });
-                }
+                if (result.error)
+                    return res.status(400).json(result);
                 console.log({ userAccesToken: userAccesToken });
-                return res.status(200).json(result);
+                return res.status(200).json(result.message);
             }
             catch (e) {
                 console.log(e);
-                return res.status(501).json({
-                    erroMessage: "Somethin went wrong in our server, try again later",
-                });
+                return res.status(501).json(result);
             }
         });
         this.authModel = authModel;
