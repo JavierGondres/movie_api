@@ -35,9 +35,4 @@ export const signInSchema = [
       .withMessage("password too short")
       .notEmpty()
       .withMessage("password is required"),
-   body("userAccesToken")
-      .isString()
-      .withMessage("Token must be a string")
-      .notEmpty()
-      .withMessage("Token is required"),
  ];

@@ -9,7 +9,7 @@ export class AuthController {
    }
 
    signIn = async (req: Request, res: Response) => {
-      const { userEmail, userPassword, userAccesToken } = req.body;
+      const { userEmail, userPassword} = req.body;
       let result: {
          error: boolean;
          message: string;
@@ -22,7 +22,6 @@ export class AuthController {
          result = await this.authModel.signIn({
             userEmail,
             userPassword,
-            userAccesToken,
          });
 
          if (result.error) return res.status(400).json(result);

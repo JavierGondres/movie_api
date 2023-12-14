@@ -8,7 +8,7 @@ export const createApp = async ({ userModel, authModel, db }: any) => {
    app.disable("x-powered-by");
 
    app.use("/users", createUserRouter({ userModel: userModel, db: db }));
-   app.use("/auth", createAuthRouter({ authModel: authModel }));
+   app.use("/auth", createAuthRouter({ authModel: authModel, db: db }));
 
    const PORT = process.env.PORT ?? 1234;
    app.listen(PORT, () => {

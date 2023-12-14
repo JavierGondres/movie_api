@@ -1,10 +1,18 @@
 import { Roles } from "../../types/enum"
+import { Request, Response, NextFunction } from "express"
+export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
 
-export const isAdmin = (req: any, res: any, next: any) => {
+   if(!req.decodedUserRole)
+      return res.status(404).json({
+         error: true,
+         message: "Missing auth"
+      })
+
+
     if(req.decodedUserRole.toLowerCase() === Roles.ADMIN){
-       next()
+       return next()
     }else{
-       res.status(403).send({
+       return res.status(403).send({
          error: true,
          message: "Not Admin"
        })

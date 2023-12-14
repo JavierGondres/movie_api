@@ -1,4 +1,4 @@
-import { Collection, ObjectId, Document } from "mongodb";
+import { Collection, ObjectId, Document, WithId } from "mongodb";
 import { Users } from "../types";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
@@ -59,14 +59,12 @@ export class AuthModel {
       }
    }
 
-   async signIn({ userEmail, userPassword, userAccesToken }: Users) {
+   async signIn({ userEmail, userPassword}: Users) {
       let message;
-      let existUser
+      let existUser: WithId<Document> | null
       try {
          existUser = await this.userCollection.findOne({
             userEmail: userEmail,
-            userPassword: userPassword,
-            userAccesToken: userAccesToken,
          });
 
          if (!existUser) {
@@ -76,18 +74,37 @@ export class AuthModel {
                message: message,
             };
          }
-         else{
-            message = "User exist";
+
+      } catch (error) {
+         console.log(error)
+         message = "Something went wron in sign in, getting user";
+         return {
+            error: true,
+            message: message,
+         };
+      }
+
+      try {
+         const user: Users = existUser as unknown as Users;
+         const isValidPassowrd = await bcrypt.compare(userPassword.toString(),user.userPassword.toString());
+
+         if (!isValidPassowrd) {
+            message = "Password or email is incorrect";
+            return {
+               error: true,
+               message: message,
+            };
+         }
+         else {
+            message = `Welcome ${user.userName}, you are logged in`;
             return {
                error: false,
                message: message,
             };
          }
-
-
       } catch (error) {
          console.log(error)
-         message = "Something went wron in sign in, getting user";
+         message = `Somethin went wron trying to login`;
          return {
             error: true,
             message: message,

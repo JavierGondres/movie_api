@@ -60,15 +60,13 @@ class AuthModel {
             }
         });
     }
-    signIn({ userEmail, userPassword, userAccesToken }) {
+    signIn({ userEmail, userPassword }) {
         return __awaiter(this, void 0, void 0, function* () {
             let message;
             let existUser;
             try {
                 existUser = yield this.userCollection.findOne({
                     userEmail: userEmail,
-                    userPassword: userPassword,
-                    userAccesToken: userAccesToken,
                 });
                 if (!existUser) {
                     message = "User doesnt exist";
@@ -77,8 +75,27 @@ class AuthModel {
                         message: message,
                     };
                 }
+            }
+            catch (error) {
+                console.log(error);
+                message = "Something went wron in sign in, getting user";
+                return {
+                    error: true,
+                    message: message,
+                };
+            }
+            try {
+                const user = existUser;
+                const isValidPassowrd = yield bcrypt_1.default.compare(userPassword.toString(), user.userPassword.toString());
+                if (!isValidPassowrd) {
+                    message = "Password or email is incorrect";
+                    return {
+                        error: true,
+                        message: message,
+                    };
+                }
                 else {
-                    message = "User exist";
+                    message = `Welcome ${user.userName}, you are logged in`;
                     return {
                         error: false,
                         message: message,
@@ -87,7 +104,7 @@ class AuthModel {
             }
             catch (error) {
                 console.log(error);
-                message = "Something went wron in sign in, getting user";
+                message = `Somethin went wron trying to login`;
                 return {
                     error: true,
                     message: message,

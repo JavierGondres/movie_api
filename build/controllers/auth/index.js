@@ -15,7 +15,7 @@ const enum_1 = require("../../types/enum");
 class AuthController {
     constructor({ authModel }) {
         this.signIn = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { userEmail, userPassword, userAccesToken } = req.body;
+            const { userEmail, userPassword } = req.body;
             let result = {
                 error: false,
                 message: "Something went wrong",
@@ -24,7 +24,6 @@ class AuthController {
                 result = yield this.authModel.signIn({
                     userEmail,
                     userPassword,
-                    userAccesToken,
                 });
                 if (result.error)
                     return res.status(400).json(result);

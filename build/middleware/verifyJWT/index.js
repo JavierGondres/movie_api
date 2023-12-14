@@ -33,7 +33,7 @@ class ValidateToken {
                 if (!user) {
                     result = {
                         error: true,
-                        message: "Authorization error",
+                        message: "Authorization denied",
                     };
                     return res.status(403).json(result);
                 }
@@ -55,7 +55,7 @@ class ValidateToken {
             }
             catch (error) {
                 console.log({ errorMessage: error });
-                return res.status(500).json({ message: "Something went wrong" });
+                return res.status(500).json({ message: "Something went wrong in authorization" });
             }
         });
         this.userCollection = userCollection;

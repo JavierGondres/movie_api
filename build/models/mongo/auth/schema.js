@@ -36,9 +36,4 @@ exports.signInSchema = [
         .withMessage("password too short")
         .notEmpty()
         .withMessage("password is required"),
-    (0, express_validator_1.body)("userAccesToken")
-        .isString()
-        .withMessage("Token must be a string")
-        .notEmpty()
-        .withMessage("Token is required"),
 ];

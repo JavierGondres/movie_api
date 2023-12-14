@@ -42,7 +42,7 @@ const createApp = ({ userModel, authModel, db }) => __awaiter(void 0, void 0, vo
     app.use((0, express_1.json)());
     app.disable("x-powered-by");
     app.use("/users", (0, users_1.createUserRouter)({ userModel: userModel, db: db }));
-    app.use("/auth", (0, auth_1.createAuthRouter)({ authModel: authModel }));
+    app.use("/auth", (0, auth_1.createAuthRouter)({ authModel: authModel, db: db }));
     const PORT = (_a = process.env.PORT) !== null && _a !== void 0 ? _a : 1234;
     app.listen(PORT, () => {
         console.log(`Server is listening on port http://localhost:${PORT}`);
