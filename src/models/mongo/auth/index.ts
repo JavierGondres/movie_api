@@ -59,25 +59,12 @@ export class AuthModel {
       }
    }
 
-   async signIn({ userEmail, userPassword}: Users) {
+   async signIn({ userEmail, userPassword }: Users) {
       let message;
-      let existUser: WithId<Document> | null
-      try {
-         existUser = await this.userCollection.findOne({
-            userEmail: userEmail,
-         });
+      const existUser: WithId<Document> | null = await this.findUserByEmail({userEmail: userEmail});
 
-         if (!existUser) {
-            message = "User doesnt exist";
-            return {
-               error: true,
-               message: message,
-            };
-         }
-
-      } catch (error) {
-         console.log(error)
-         message = "Something went wron in sign in, getting user";
+      if (!existUser) {
+         message = "User doesnt exist";
          return {
             error: true,
             message: message,
@@ -86,7 +73,10 @@ export class AuthModel {
 
       try {
          const user: Users = existUser as unknown as Users;
-         const isValidPassowrd = await bcrypt.compare(userPassword.toString(),user.userPassword.toString());
+         const isValidPassowrd = await bcrypt.compare(
+            userPassword.toString(),
+            user.userPassword.toString()
+         );
 
          if (!isValidPassowrd) {
             message = "Password or email is incorrect";
@@ -94,8 +84,7 @@ export class AuthModel {
                error: true,
                message: message,
             };
-         }
-         else {
+         } else {
             message = `Welcome ${user.userName}, you are logged in`;
             return {
                error: false,
@@ -103,12 +92,20 @@ export class AuthModel {
             };
          }
       } catch (error) {
-         console.log(error)
+         console.log(error);
          message = `Somethin went wron trying to login`;
          return {
             error: true,
             message: message,
          };
       }
+   }
+
+   async findUserByEmail({ userEmail }: { userEmail: string }) {
+      const existUser = await this.userCollection.findOne({
+         userEmail: userEmail,
+      });
+
+      return existUser;
    }
 }

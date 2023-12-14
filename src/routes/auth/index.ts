@@ -10,7 +10,7 @@ export const createAuthRouter = ({ authModel, db }: any) => {
    const authController = new AuthController({ authModel });
    const validateToken = new ValidateToken(db)
 
-   authRouter.post("/signIn", [validateData(signInSchema), validateToken.validateToken], authController.signIn);
+   authRouter.get("/signIn", [validateData(signInSchema), validateToken.validateToken], authController.signIn);
    authRouter.post("/signUp", validateData(signUpSchema), authController.signUp);
 
    return authRouter;

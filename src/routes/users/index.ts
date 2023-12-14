@@ -15,7 +15,7 @@ export const createUserRouter = ({ userModel, db }: any) => {
    se debe convertir a funcion flecha o usar bind, por ejemplo instanciaDeMiClase.miMetodo.bind(instanciaDeMiClase)
    y asi no se pierde el contexto "this"
    */
-   usersRouter.get("/", [isAdmin], usersController.getAll);
+   usersRouter.get("/", [validateToken.validateToken, isAdmin], usersController.getAll);
 
    return usersRouter;
 };

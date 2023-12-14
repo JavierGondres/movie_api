@@ -63,22 +63,9 @@ class AuthModel {
     signIn({ userEmail, userPassword }) {
         return __awaiter(this, void 0, void 0, function* () {
             let message;
-            let existUser;
-            try {
-                existUser = yield this.userCollection.findOne({
-                    userEmail: userEmail,
-                });
-                if (!existUser) {
-                    message = "User doesnt exist";
-                    return {
-                        error: true,
-                        message: message,
-                    };
-                }
-            }
-            catch (error) {
-                console.log(error);
-                message = "Something went wron in sign in, getting user";
+            const existUser = yield this.findUserByEmail({ userEmail: userEmail });
+            if (!existUser) {
+                message = "User doesnt exist";
                 return {
                     error: true,
                     message: message,
@@ -110,6 +97,14 @@ class AuthModel {
                     message: message,
                 };
             }
+        });
+    }
+    findUserByEmail({ userEmail }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const existUser = yield this.userCollection.findOne({
+                userEmail: userEmail,
+            });
+            return existUser;
         });
     }
 }
