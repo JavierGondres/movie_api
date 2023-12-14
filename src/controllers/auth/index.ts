@@ -15,7 +15,7 @@ export class AuthController {
          message: string;
       } = {
          error: false,
-         message: "",
+         message: "Something went wrong",
       };
 
       try {

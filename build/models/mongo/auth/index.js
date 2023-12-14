@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthModel = void 0;
-// import bcrypt from "bcryptjs"
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 class AuthModel {
@@ -23,6 +23,7 @@ class AuthModel {
     signUp({ userName, userEmail, userPassword, userRole, userAccesToken, }) {
         return __awaiter(this, void 0, void 0, function* () {
             let message;
+            const passwordHash = yield bcrypt_1.default.hash(userPassword.toString(), 8);
             try {
                 console.log("Sign");
                 const existUser = yield this.userCollection.findOne({
@@ -38,7 +39,7 @@ class AuthModel {
                 const newUser = {
                     userName: userName,
                     userEmail: userEmail,
-                    userPassword: userPassword,
+                    userPassword: passwordHash,
                     userAccesToken: userAccesToken,
                     userRole: userRole !== null && userRole !== void 0 ? userRole : "User",
                 };

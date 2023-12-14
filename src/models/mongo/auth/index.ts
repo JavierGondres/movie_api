@@ -1,6 +1,6 @@
 import { Collection, ObjectId, Document } from "mongodb";
 import { Users } from "../types";
-// import bcrypt from "bcryptjs"
+import bcrypt from "bcrypt"
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -18,6 +18,7 @@ export class AuthModel {
       userAccesToken,
    }: Users) {
       let message;
+      const passwordHash = await bcrypt.hash(userPassword.toString(), 8)
       try {
          console.log("Sign");
 
@@ -36,7 +37,7 @@ export class AuthModel {
          const newUser: Partial<Document & { _id?: ObjectId }> = {
             userName: userName,
             userEmail: userEmail,
-            userPassword: userPassword,
+            userPassword: passwordHash,
             userAccesToken: userAccesToken,
             userRole: userRole ?? "User",
          };

@@ -18,7 +18,7 @@ class AuthController {
             const { userEmail, userName, userPassword, userRole } = _req.body;
             let result = {
                 error: false,
-                message: "",
+                message: "Something went wrong",
             };
             try {
                 const { error, userAccesToken } = yield (0, generateJWT_1.generateJWT)({
