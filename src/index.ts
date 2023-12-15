@@ -3,7 +3,7 @@ import { createUserRouter } from "./routes/users";
 import { createAuthRouter } from "./routes/auth";
 import { createMovieRouter } from "./routes/movies";
 import { Database } from "./types/database";
-
+// import cors from "cors";
 export const createApp = async ({
    userModel,
    authModel,
@@ -16,11 +16,11 @@ export const createApp = async ({
 
    app.use(
       "/users",
-      createUserRouter({ userModel: userModel, userCollection: userCollection})
+      createUserRouter({ userModel: userModel, userCollection: userCollection })
    );
    app.use(
       "/auth",
-      createAuthRouter({ authModel: authModel, userCollection: userCollection})
+      createAuthRouter({ authModel: authModel, userCollection: userCollection })
    );
    app.use(
       "/movies",

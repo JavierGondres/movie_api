@@ -69,6 +69,23 @@ class AuthController {
                 return res.status(501).json(result);
             }
         });
+        this.signOut = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { _id } = req.body;
+            let result = {
+                error: true,
+                message: "Something went wrong signout",
+            };
+            try {
+                result = yield this.authModel.signOut({ _id });
+                if (result.error)
+                    return res.status(400).json(result);
+                return res.status(200).json(result.message);
+            }
+            catch (e) {
+                console.log(e);
+                return res.status(501).json(result);
+            }
+        });
         this.authModel = authModel;
     }
 }

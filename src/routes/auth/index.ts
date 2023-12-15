@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { AuthController } from "../../controllers/auth";
-import { signInSchema, signUpSchema } from "../../models/mongo/auth/schema";
+import { signInSchema, signOutSchema, signUpSchema } from "../../models/mongo/auth/schema";
 import { validateData } from "../../middleware/validateData";
 // import { isAdmin } from "../../middleware/isAdmin";
 import { ValidateToken } from "../../middleware/verifyJWT";
@@ -13,8 +13,9 @@ export const createAuthRouter = ({ authModel, userCollection }: Pick<Database, '
    const validateToken = new ValidateToken(userCollection as any)
    const checkIsValid = new CheckIsValid()
 
-   authRouter.get("/signIn", [validateData(signInSchema), validateToken.validateToken, checkIsValid.checkIsValid], authController.signIn);
+   authRouter.post("/signIn", [validateData(signInSchema), validateToken.validateToken, checkIsValid.checkIsValid], authController.signIn);
    authRouter.post("/signUp", validateData(signUpSchema), authController.signUp);
+   authRouter.post("/signOut", validateData(signOutSchema), authController.signOut);
 
    return authRouter;
 };

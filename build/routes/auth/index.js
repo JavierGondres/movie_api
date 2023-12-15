@@ -13,8 +13,9 @@ const createAuthRouter = ({ authModel, userCollection }) => {
     const authController = new auth_1.AuthController({ authModel });
     const validateToken = new verifyJWT_1.ValidateToken(userCollection);
     const checkIsValid = new checkIsValid_1.CheckIsValid();
-    authRouter.get("/signIn", [(0, validateData_1.validateData)(schema_1.signInSchema), validateToken.validateToken, checkIsValid.checkIsValid], authController.signIn);
+    authRouter.post("/signIn", [(0, validateData_1.validateData)(schema_1.signInSchema), validateToken.validateToken, checkIsValid.checkIsValid], authController.signIn);
     authRouter.post("/signUp", (0, validateData_1.validateData)(schema_1.signUpSchema), authController.signUp);
+    authRouter.post("/signOut", (0, validateData_1.validateData)(schema_1.signOutSchema), authController.signOut);
     return authRouter;
 };
 exports.createAuthRouter = createAuthRouter;

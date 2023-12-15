@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthModel = void 0;
+const mongodb_1 = require("mongodb");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
@@ -42,7 +43,7 @@ class AuthModel {
                     userPassword: passwordHash,
                     userAccesToken: userAccesToken,
                     userRole: userRole !== null && userRole !== void 0 ? userRole : "User",
-                    isValid: true
+                    isValid: true,
                 };
                 yield this.userCollection.insertOne(newUser);
                 message = "User created";
@@ -64,7 +65,9 @@ class AuthModel {
     signIn({ userEmail, userPassword }) {
         return __awaiter(this, void 0, void 0, function* () {
             let message;
-            const existUser = yield this.findUserByEmail({ userEmail: userEmail });
+            const existUser = yield this.findUser({
+                userEmail: userEmail,
+            });
             if (!existUser) {
                 message = "User doesnt exist";
                 return {
@@ -100,11 +103,43 @@ class AuthModel {
             }
         });
     }
-    findUserByEmail({ userEmail }) {
+    signOut({ _id }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const existUser = yield this.userCollection.findOne({
-                userEmail: userEmail,
-            });
+            let message;
+            try {
+                const tryToUpdateUser = yield this.userCollection.updateOne({
+                    _id: new mongodb_1.ObjectId(_id),
+                }, {
+                    $set: {
+                        isValid: false,
+                    },
+                });
+                if (!tryToUpdateUser) {
+                    message = "User dosent exist";
+                    return {
+                        error: true,
+                        message: message,
+                    };
+                }
+                message = "Logout";
+                return {
+                    error: false,
+                    message: message,
+                };
+            }
+            catch (error) {
+                console.log(error);
+                message = "Problems with logging out";
+                return {
+                    error: true,
+                    message: message,
+                };
+            }
+        });
+    }
+    findUser(obj) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const existUser = yield this.userCollection.findOne(obj);
             return existUser;
         });
     }

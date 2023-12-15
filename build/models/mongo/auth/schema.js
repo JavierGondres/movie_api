@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.signInSchema = exports.signUpSchema = void 0;
+exports.signOutSchema = exports.signInSchema = exports.signUpSchema = void 0;
 const enum_1 = require("../../../types/enum");
 const express_validator_1 = require("express-validator");
 exports.signUpSchema = [
@@ -36,4 +36,11 @@ exports.signInSchema = [
         .withMessage("password too short")
         .notEmpty()
         .withMessage("password is required"),
+];
+exports.signOutSchema = [
+    (0, express_validator_1.body)("_id")
+        .isMongoId()
+        .withMessage("Invalid id")
+        .notEmpty()
+        .withMessage("id required"),
 ];

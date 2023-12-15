@@ -35,4 +35,12 @@ export const signInSchema = [
       .withMessage("password too short")
       .notEmpty()
       .withMessage("password is required"),
- ];
+];
+
+export const signOutSchema = [
+   body("_id")
+      .isMongoId()
+      .withMessage("Invalid id")
+      .notEmpty()
+      .withMessage("id required"),
+];

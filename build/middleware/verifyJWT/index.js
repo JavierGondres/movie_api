@@ -17,20 +17,22 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 class ValidateToken {
     constructor(userCollection) {
         this.validateToken = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            const auhorizationHeader = req.headers.authorization;
+            const authorizationHeader = req.headers['authorization'];
             let result;
-            if (!auhorizationHeader) {
+            if (!authorizationHeader) {
+                console.log(authorizationHeader);
                 return res.status(401).json({
                     error: true,
                     message: "Access token is missing",
                 });
             }
-            const token = auhorizationHeader.split(" ")[1];
+            const token = authorizationHeader.split(" ")[1];
             try {
                 let user = (yield this.userCollection.findOne({
                     userAccesToken: token,
                 }));
                 if (!user) {
+                    console.log(token);
                     result = {
                         error: true,
                         message: "Authorization denied",
@@ -38,7 +40,6 @@ class ValidateToken {
                     return res.status(403).json(result);
                 }
                 result = jsonwebtoken_1.default.verify(token || "", process.env.JWT || "", (err, decoded) => {
-                    // console.log(token)
                     if (err) {
                         console.log(err);
                         return res.status(403).json({ message: "Forbidden r37226" });

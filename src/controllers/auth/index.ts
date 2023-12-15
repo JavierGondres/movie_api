@@ -74,4 +74,25 @@ export class AuthController {
          return res.status(501).json(result);
       }
    };
+
+   signOut = async (req: Request, res: Response) => {
+      const { _id } = req.body;
+      let result: {
+         error: boolean;
+         message: string;
+      } = {
+         error: true,
+         message: "Something went wrong signout",
+      };
+
+      try {
+         result = await this.authModel.signOut({_id})
+         if (result.error) return res.status(400).json(result);
+
+         return res.status(200).json(result.message);
+      } catch (e) {
+         console.log(e);
+         return res.status(501).json(result);
+      }
+   };
 }

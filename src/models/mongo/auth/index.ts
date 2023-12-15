@@ -40,7 +40,7 @@ export class AuthModel {
             userPassword: passwordHash,
             userAccesToken: userAccesToken,
             userRole: userRole ?? "User",
-            isValid: true
+            isValid: true,
          };
 
          await this.userCollection.insertOne(newUser);
@@ -62,7 +62,9 @@ export class AuthModel {
 
    async signIn({ userEmail, userPassword }: Users) {
       let message;
-      const existUser: WithId<Document> | null = await this.findUserByEmail({userEmail: userEmail});
+      const existUser: WithId<Document> | null = await this.findUser({
+         userEmail: userEmail,
+      });
 
       if (!existUser) {
          message = "User doesnt exist";
@@ -102,10 +104,45 @@ export class AuthModel {
       }
    }
 
-   async findUserByEmail({ userEmail }: { userEmail: string }) {
-      const existUser = await this.userCollection.findOne({
-         userEmail: userEmail,
-      });
+   async signOut({ _id }: Users) {
+      let message;
+      try {
+         const tryToUpdateUser = await this.userCollection.updateOne(
+            {
+               _id: new ObjectId(_id),
+            },
+            {
+               $set: {
+                  isValid: false,
+               },
+            }
+         );
+
+         if (!tryToUpdateUser) {
+            message = "User dosent exist";
+            return {
+               error: true,
+               message: message,
+            };
+         }
+
+         message = "Logout";
+         return {
+            error: false,
+            message: message,
+         };
+      } catch (error) {
+         console.log(error);
+         message = "Problems with logging out";
+         return {
+            error: true,
+            message: message,
+         };
+      }
+   }
+
+   async findUser(obj: object) {
+      const existUser = await this.userCollection.findOne(obj);
 
       return existUser;
    }
