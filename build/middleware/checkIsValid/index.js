@@ -8,22 +8,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateJWT = void 0;
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config();
-const generateJWT = ({ userName, userRole }) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const payload = { userName, userRole };
-        const userAccesToken = jsonwebtoken_1.default.sign(payload, process.env.JWT || '');
-        return { error: false, userAccesToken };
+exports.CheckIsValid = void 0;
+class CheckIsValid {
+    constructor() {
+        this.checkIsValid = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            let message;
+            if (!req.isValid) {
+                message = {
+                    error: true,
+                    message: "isValid false",
+                };
+                return res.status(403).json(message);
+            }
+            next();
+        });
     }
-    catch (error) {
-        return { error: true };
-    }
-});
-exports.generateJWT = generateJWT;
+}
+exports.CheckIsValid = CheckIsValid;

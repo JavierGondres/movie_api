@@ -40,6 +40,7 @@ export class AuthModel {
             userPassword: passwordHash,
             userAccesToken: userAccesToken,
             userRole: userRole ?? "User",
+            isValid: true
          };
 
          await this.userCollection.insertOne(newUser);

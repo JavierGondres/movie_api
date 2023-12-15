@@ -7,6 +7,7 @@ declare module "express" {
    interface Request {
       decodedUserName?: any;
       decodedUserRole?: any;
+      isValid?:any
    }
 }
 
@@ -28,12 +29,12 @@ export class ValidateToken {
       }
 
       const token = auhorizationHeader.split(" ")[1];
-      console.log(token);
+
       try {
          let user: Users | null = (await this.userCollection.findOne({
             userAccesToken: token,
          })) as Users | null;
-         console.log(user);
+
          if (!user) {
             result = {
                error: true,
@@ -47,7 +48,9 @@ export class ValidateToken {
             token || "",
             process.env.JWT || "",
             (err: any, decoded: any) => {
+               // console.log(token)
                if (err) {
+                  console.log(err)
                   return res.status(403).json({ message: "Forbidden r37226" });
                }
                if (!user?.userName === decoded.userName) {
@@ -60,6 +63,7 @@ export class ValidateToken {
                }
                req.decodedUserName = decoded.userName;
                req.decodedUserRole = decoded.userRole;
+               req.isValid = user?.isValid;
                next();
             }
          );

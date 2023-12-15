@@ -5,6 +5,7 @@ export interface Users {
     userPassword: string | number;
     userAccesToken: string;
     userRole: string;
+    isValid: boolean
 }
 
 export interface Movies {

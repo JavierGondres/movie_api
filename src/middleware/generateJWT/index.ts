@@ -3,14 +3,11 @@ import dotenv from "dotenv";
 import { Props } from "./types";
 dotenv.config();
 
-const options = {
-   expiresIn: "24h",
-};
 
 export const generateJWT = async ({ userName, userRole}: Props) => {
    try {
       const payload = { userName, userRole };
-      const userAccesToken = jwt.sign(payload, process.env.JWT || '', options);
+      const userAccesToken = jwt.sign(payload, process.env.JWT || '');
       return { error: false, userAccesToken };
    } catch (error) {
       return { error: true };

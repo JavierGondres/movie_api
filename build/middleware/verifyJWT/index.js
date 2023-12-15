@@ -26,12 +26,10 @@ class ValidateToken {
                 });
             }
             const token = auhorizationHeader.split(" ")[1];
-            console.log(token);
             try {
                 let user = (yield this.userCollection.findOne({
                     userAccesToken: token,
                 }));
-                console.log(user);
                 if (!user) {
                     result = {
                         error: true,
@@ -40,7 +38,9 @@ class ValidateToken {
                     return res.status(403).json(result);
                 }
                 result = jsonwebtoken_1.default.verify(token || "", process.env.JWT || "", (err, decoded) => {
+                    // console.log(token)
                     if (err) {
+                        console.log(err);
                         return res.status(403).json({ message: "Forbidden r37226" });
                     }
                     if (!(user === null || user === void 0 ? void 0 : user.userName) === decoded.userName) {
@@ -52,6 +52,7 @@ class ValidateToken {
                     }
                     req.decodedUserName = decoded.userName;
                     req.decodedUserRole = decoded.userRole;
+                    req.isValid = user === null || user === void 0 ? void 0 : user.isValid;
                     next();
                 });
             }
