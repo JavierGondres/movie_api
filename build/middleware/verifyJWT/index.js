@@ -26,10 +26,12 @@ class ValidateToken {
                 });
             }
             const token = auhorizationHeader.split(" ")[1];
+            console.log(token);
             try {
                 let user = (yield this.userCollection.findOne({
                     userAccesToken: token,
                 }));
+                console.log(user);
                 if (!user) {
                     result = {
                         error: true,

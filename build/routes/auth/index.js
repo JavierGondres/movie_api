@@ -7,10 +7,10 @@ const schema_1 = require("../../models/mongo/auth/schema");
 const validateData_1 = require("../../middleware/validateData");
 // import { isAdmin } from "../../middleware/isAdmin";
 const verifyJWT_1 = require("../../middleware/verifyJWT");
-const createAuthRouter = ({ authModel, db }) => {
+const createAuthRouter = ({ authModel, userCollection }) => {
     const authRouter = (0, express_1.Router)();
     const authController = new auth_1.AuthController({ authModel });
-    const validateToken = new verifyJWT_1.ValidateToken(db);
+    const validateToken = new verifyJWT_1.ValidateToken(userCollection);
     authRouter.get("/signIn", [(0, validateData_1.validateData)(schema_1.signInSchema), validateToken.validateToken], authController.signIn);
     authRouter.post("/signUp", (0, validateData_1.validateData)(schema_1.signUpSchema), authController.signUp);
     return authRouter;

@@ -1,19 +1,50 @@
-// import { Db, MongoClient } from "mongodb";
-// import connect from "..";
-// import { Movies } from "../types";
+import { Collection, Document, ObjectId } from "mongodb";
+import { Movies } from "../types";
 
 export class MovieModel {
-   // db: Db;
+   private userCollection: Collection<Document>;
+   constructor(userCollection: Collection<Document>) {
+      this.userCollection = userCollection;
+   }
 
-   // constructor(db: Db) {
-   //    this.db = db;
-   // }
+   async createMovie({
+      availability,
+      description,
+      imageURL,
+      lastModifiedDate,
+      rentalPrice,
+      salePrice,
+      stock,
+      title,
+   }: Movies) {
+      let message
+      try {
+         const newMovie: Partial<Document & { _id?: ObjectId }> = {
+            availability: availability,
+            description: description,
+            imageURL: imageURL,
+            lastModifiedDate: lastModifiedDate,
+            rentalPrice: rentalPrice,
+            salePrice:salePrice,
+            stock:stock,
+            title:title,
+         };
 
-   // async getAll({ genre }: { genre: string }): Promise<Movies[]> {
-   //    // const { movies } = await connect();
+         await this.userCollection.insertOne(newMovie);
 
-   //    this.db.collection("tal");
+         message = "Movie created";
+         return {
+            error: false,
+            message: message,
+         };
 
-   //    // return movies.find({ genre }).toArray();
-   // }
+      } catch (error) {
+         console.log(error);
+         message = "Something went wrong creating movie";
+         return {
+            error: true,
+            message: message,
+         };
+      }
+   }
 }

@@ -2,10 +2,20 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = require("../..");
 const auth_1 = require("../../models/mongo/auth");
+const movies_1 = require("../../models/mongo/movies");
 const users_1 = require("../../models/mongo/users");
 const MongoSingleton_1 = require("../../services/MongoSingleton");
 const enum_1 = require("../../types/enum");
-const db = MongoSingleton_1.MongoSingleton.getClient()
+const userCollection = MongoSingleton_1.MongoSingleton.getClient()
     .db(enum_1.DB.movie_api)
     .collection(enum_1.DBCollections.USERS);
-(0, __1.createApp)({ userModel: new users_1.UserModel(db), authModel: new auth_1.AuthModel(db), db: db });
+const movieCollection = MongoSingleton_1.MongoSingleton.getClient()
+    .db(enum_1.DB.movie_api)
+    .collection(enum_1.DBCollections.MOVIES);
+(0, __1.createApp)({
+    userModel: new users_1.UserModel(userCollection),
+    authModel: new auth_1.AuthModel(userCollection),
+    movieModel: new movies_1.MovieModel(movieCollection),
+    userCollection: userCollection,
+    movieCollection: movieCollection,
+});

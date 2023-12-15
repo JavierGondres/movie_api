@@ -4,11 +4,11 @@ import { UsersController } from "../../controllers/users";
 import { ValidateToken } from "../../middleware/verifyJWT";
 import { isAdmin } from "../../middleware/isAdmin";
 
-export const createUserRouter = ({ userModel, db }: any) => {
+export const createUserRouter = ({ userModel, userCollection }: any) => {
    const usersRouter = Router();
    const usersController = new UsersController({ userModel });
 
-   const validateToken = new ValidateToken(db)
+   const validateToken = new ValidateToken(userCollection)
 
    /*
    Para que se pueda pasar una metodo de una clase en un middleWare, el metodo

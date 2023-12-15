@@ -1,17 +1,49 @@
-// import { MovieModel } from "../../models/mongo/movies";
-// import { MongoSingleton } from "../../services/MongoSingleton";
+import { Request, Response } from "express";
 
-export class MoviesController {
-//    static getMovies(req: any, res: any) {
+export class MovieController {
+   movieModel: any;
 
-    
-//       const movie = new MovieModel(MongoSingleton.);
+   constructor({ movieModel }: any) {
+      this.movieModel = movieModel;
+   }
 
-//       //  const movies = movie.getAll()
-//       // req.app.get('db').
+   createMovie = async (req: Request, res: Response) => {
+      const {
+         availability,
+         description,
+         imageURL,
+         lastModifiedDate,
+         rentalPrice,
+         salePrice,
+         stock,
+         title,
+      } = req.body;
 
-//       // res.status(200).json(movies)
+      let result: {
+         error: boolean;
+         message: string;
+      } = {
+         error: false,
+         message: "Something went wrong",
+      };
 
-//       console.log(res);
-//    }
+      try {
+         result = await this.movieModel.createMovie({
+            availability,
+            description,
+            imageURL,
+            lastModifiedDate,
+            rentalPrice,
+            salePrice,
+            stock,
+            title,
+         });
+
+         if (result.error) return res.status(400).json(result);
+         return res.status(200).json(result.message);
+      } catch (e) {
+         console.log(e);
+         return res.status(501).json(result);
+      }
+   };
 }

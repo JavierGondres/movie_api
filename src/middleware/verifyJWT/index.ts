@@ -28,11 +28,13 @@ export class ValidateToken {
       }
 
       const token = auhorizationHeader.split(" ")[1];
+      console.log(token)
       try {
          let user: Users | null = (await this.userCollection.findOne({
             userAccesToken: token,
          })) as Users | null;
 
+         console.log(user)
          if (!user) {
             result = {
                error: true,

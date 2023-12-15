@@ -5,10 +5,10 @@ import { validateData } from "../../middleware/validateData";
 // import { isAdmin } from "../../middleware/isAdmin";
 import { ValidateToken } from "../../middleware/verifyJWT";
 
-export const createAuthRouter = ({ authModel, db }: any) => {
+export const createAuthRouter = ({ authModel, userCollection }: any) => {
    const authRouter = Router();
    const authController = new AuthController({ authModel });
-   const validateToken = new ValidateToken(db)
+   const validateToken = new ValidateToken(userCollection)
 
    authRouter.get("/signIn", [validateData(signInSchema), validateToken.validateToken], authController.signIn);
    authRouter.post("/signUp", validateData(signUpSchema), authController.signUp);
