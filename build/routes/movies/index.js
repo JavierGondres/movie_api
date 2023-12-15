@@ -7,7 +7,7 @@ const verifyJWT_1 = require("../../middleware/verifyJWT");
 const movies_1 = require("../../controllers/movies");
 const schema_1 = require("../../models/mongo/movies/schema");
 const isAdmin_1 = require("../../middleware/isAdmin");
-const createMovieRouter = ({ movieModel, userCollection }) => {
+const createMovieRouter = ({ movieModel, userCollection, }) => {
     const movieRouter = (0, express_1.Router)();
     const movieController = new movies_1.MovieController({ movieModel });
     const validateToken = new verifyJWT_1.ValidateToken(userCollection);

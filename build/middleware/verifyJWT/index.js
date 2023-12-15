@@ -57,7 +57,9 @@ class ValidateToken {
             }
             catch (error) {
                 console.log({ errorMessage: error });
-                return res.status(500).json({ message: "Something went wrong in authorization" });
+                return res
+                    .status(500)
+                    .json({ message: "Something went wrong in authorization" });
             }
         });
         this.userCollection = userCollection;

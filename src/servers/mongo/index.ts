@@ -1,3 +1,4 @@
+import { Collection } from "mongodb";
 import { createApp } from "../..";
 import { AuthModel } from "../../models/mongo/auth";
 import { MovieModel } from "../../models/mongo/movies";
@@ -16,6 +17,6 @@ createApp({
    userModel: new UserModel(userCollection),
    authModel: new AuthModel(userCollection),
    movieModel: new MovieModel(movieCollection),
-   userCollection: userCollection,
-   movieCollection: movieCollection,
+   userCollection: userCollection as unknown as Collection<Document>,
+   movieCollection: movieCollection as unknown as Collection<Document>,
 });

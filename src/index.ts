@@ -2,25 +2,25 @@ import express, { json } from "express";
 import { createUserRouter } from "./routes/users";
 import { createAuthRouter } from "./routes/auth";
 import { createMovieRouter } from "./routes/movies";
+import { Database } from "./types/database";
 
 export const createApp = async ({
    userModel,
    authModel,
    movieModel,
    userCollection,
-   db_movie,
-}: any) => {
+}: Database) => {
    const app = express();
-   app.use(json());1
+   app.use(json());
    app.disable("x-powered-by");
 
    app.use(
       "/users",
-      createUserRouter({ userModel: userModel, userCollection: userCollection })
+      createUserRouter({ userModel: userModel, userCollection: userCollection})
    );
    app.use(
       "/auth",
-      createAuthRouter({ authModel: authModel, userCollection: userCollection })
+      createAuthRouter({ authModel: authModel, userCollection: userCollection})
    );
    app.use(
       "/movies",

@@ -37,11 +37,10 @@ const express_1 = __importStar(require("express"));
 const users_1 = require("./routes/users");
 const auth_1 = require("./routes/auth");
 const movies_1 = require("./routes/movies");
-const createApp = ({ userModel, authModel, movieModel, userCollection, db_movie, }) => __awaiter(void 0, void 0, void 0, function* () {
+const createApp = ({ userModel, authModel, movieModel, userCollection, }) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const app = (0, express_1.default)();
     app.use((0, express_1.json)());
-    1;
     app.disable("x-powered-by");
     app.use("/users", (0, users_1.createUserRouter)({ userModel: userModel, userCollection: userCollection }));
     app.use("/auth", (0, auth_1.createAuthRouter)({ authModel: authModel, userCollection: userCollection }));

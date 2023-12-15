@@ -1,4 +1,4 @@
-import { Collection, Document, ObjectId } from "mongodb";
+import { Collection, Document, ObjectId, WithId } from "mongodb";
 import { Movies } from "../types";
 
 export class MovieModel {
@@ -18,6 +18,16 @@ export class MovieModel {
       title,
    }: Movies) {
       let message
+      const existMovie: WithId<Document> | null = await this.findMovieByTitle({title: title});
+
+      if (existMovie) {
+         message = "That movie already exist";
+         return {
+            error: true,
+            message: message,
+         };
+      }
+
       try {
          const newMovie: Partial<Document & { _id?: ObjectId }> = {
             availability: availability,
@@ -46,5 +56,13 @@ export class MovieModel {
             message: message,
          };
       }
+   }
+
+   async findMovieByTitle({ title }: { title: string }) {
+      const existMovie = await this.userCollection.findOne({
+         title: title,
+      });
+
+      return existMovie;
    }
 }

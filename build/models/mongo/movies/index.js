@@ -17,6 +17,14 @@ class MovieModel {
     createMovie({ availability, description, imageURL, lastModifiedDate, rentalPrice, salePrice, stock, title, }) {
         return __awaiter(this, void 0, void 0, function* () {
             let message;
+            const existMovie = yield this.findMovieByTitle({ title: title });
+            if (existMovie) {
+                message = "That movie already exist";
+                return {
+                    error: true,
+                    message: message,
+                };
+            }
             try {
                 const newMovie = {
                     availability: availability,
@@ -43,6 +51,14 @@ class MovieModel {
                     message: message,
                 };
             }
+        });
+    }
+    findMovieByTitle({ title }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const existMovie = yield this.userCollection.findOne({
+                title: title,
+            });
+            return existMovie;
         });
     }
 }

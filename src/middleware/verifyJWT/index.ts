@@ -16,7 +16,7 @@ export class ValidateToken {
       this.userCollection = userCollection;
    }
 
-    validateToken = async(req: Request, res: Response, next: () => void) => {
+   validateToken = async (req: Request, res: Response, next: () => void) => {
       const auhorizationHeader = req.headers.authorization;
       let result: any;
 
@@ -28,13 +28,12 @@ export class ValidateToken {
       }
 
       const token = auhorizationHeader.split(" ")[1];
-      console.log(token)
+      console.log(token);
       try {
          let user: Users | null = (await this.userCollection.findOne({
             userAccesToken: token,
          })) as Users | null;
-
-         console.log(user)
+         console.log(user);
          if (!user) {
             result = {
                error: true,
@@ -66,7 +65,9 @@ export class ValidateToken {
          );
       } catch (error) {
          console.log({ errorMessage: error });
-         return res.status(500).json({ message: "Something went wrong in authorization" });
+         return res
+            .status(500)
+            .json({ message: "Something went wrong in authorization" });
       }
-   }
+   };
 }
