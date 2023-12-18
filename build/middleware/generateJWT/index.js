@@ -18,6 +18,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const generateJWT = ({ userName, userRole }) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log(userName, userRole);
         const payload = { userName, userRole };
         const userAccesToken = jsonwebtoken_1.default.sign(payload, process.env.JWT || '');
         return { error: false, userAccesToken };

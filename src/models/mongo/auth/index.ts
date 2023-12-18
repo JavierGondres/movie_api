@@ -4,6 +4,10 @@ import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 dotenv.config();
 
+interface SignInPayload extends Users {
+   newAccesToken: string;
+}
+
 export class AuthModel {
    private userCollection: Collection<Document>;
    constructor(userCollection: Collection<Document>) {
@@ -60,7 +64,7 @@ export class AuthModel {
       }
    }
 
-   async signIn({ userEmail, userPassword }: Users) {
+   async signIn({ userEmail, userPassword, newAccesToken }: SignInPayload) {
       let message;
       const existUser: WithId<Document> | null = await this.findUser({
          userEmail: userEmail,
@@ -87,13 +91,33 @@ export class AuthModel {
                error: true,
                message: message,
             };
-         } else {
-            message = `Welcome ${user.userName}, you are logged in`;
+         }
+         console.log(newAccesToken)
+         const tryToUpdateAccesToken = await this.userCollection.updateOne(
+            {
+               userAccesToken: user.userAccesToken,
+            },
+            {
+               $set: {
+                  userAccesToken: newAccesToken,
+                  isValid: true,
+               },
+            }
+         );
+
+         if (!tryToUpdateAccesToken) {
+            message = "Error updating accesToken, user dosent found";
             return {
-               error: false,
+               error: true,
                message: message,
             };
          }
+
+         message = `Welcome ${user.userName}, you are logged in`;
+         return {
+            error: false,
+            message: message,
+         };
       } catch (error) {
          console.log(error);
          message = `Somethin went wron trying to login`;
@@ -118,8 +142,8 @@ export class AuthModel {
             }
          );
 
-         if (!tryToUpdateUser) {
-            message = "User dosent exist";
+         if (tryToUpdateUser.modifiedCount === 0) {
+            message = "User doesn't exist or wasn't modified";
             return {
                error: true,
                message: message,

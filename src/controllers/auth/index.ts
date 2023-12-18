@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { generateJWT } from "../../middleware/generateJWT";
 import { Roles } from "../../types/enum";
+
 export class AuthController {
    authModel: any;
 
@@ -19,14 +20,31 @@ export class AuthController {
       };
 
       try {
+         const decodedUsername = req.decodedUserName;
+         const decodedRole = req.decodedUserRole;
+         console.log(decodedRole, decodedUsername)
+         const { error, userAccesToken } = await generateJWT({
+            userName:decodedUsername,
+            userRole:decodedRole,
+         });
+
+         if (error) {
+            return res.status(500).json({
+               error: true,
+               message: "Couldn't create access token. Please try again later signIn.",
+            });
+         }
+
+         const newAccesToken = userAccesToken
          result = await this.authModel.signIn({
             userEmail,
             userPassword,
+            newAccesToken,
          });
 
          if (result.error) return res.status(400).json(result);
 
-         console.log(req.body);
+         // console.log(req.body);
          return res.status(200).json(result.message);
       } catch (e) {
          console.log(e);
@@ -86,7 +104,7 @@ export class AuthController {
       };
 
       try {
-         result = await this.authModel.signOut({_id})
+         result = await this.authModel.signOut({ _id });
          if (result.error) return res.status(400).json(result);
 
          return res.status(200).json(result.message);

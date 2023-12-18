@@ -6,6 +6,7 @@ dotenv.config();
 
 export const generateJWT = async ({ userName, userRole}: Props) => {
    try {
+      console.log(userName, userRole)
       const payload = { userName, userRole };
       const userAccesToken = jwt.sign(payload, process.env.JWT || '');
       return { error: false, userAccesToken };

@@ -62,7 +62,7 @@ class AuthModel {
             }
         });
     }
-    signIn({ userEmail, userPassword }) {
+    signIn({ userEmail, userPassword, newAccesToken }) {
         return __awaiter(this, void 0, void 0, function* () {
             let message;
             const existUser = yield this.findUser({
@@ -85,13 +85,27 @@ class AuthModel {
                         message: message,
                     };
                 }
-                else {
-                    message = `Welcome ${user.userName}, you are logged in`;
+                console.log(newAccesToken);
+                const tryToUpdateAccesToken = yield this.userCollection.updateOne({
+                    userAccesToken: user.userAccesToken,
+                }, {
+                    $set: {
+                        userAccesToken: newAccesToken,
+                        isValid: true,
+                    },
+                });
+                if (!tryToUpdateAccesToken) {
+                    message = "Error updating accesToken, user dosent found";
                     return {
-                        error: false,
+                        error: true,
                         message: message,
                     };
                 }
+                message = `Welcome ${user.userName}, you are logged in`;
+                return {
+                    error: false,
+                    message: message,
+                };
             }
             catch (error) {
                 console.log(error);
@@ -114,8 +128,8 @@ class AuthModel {
                         isValid: false,
                     },
                 });
-                if (!tryToUpdateUser) {
-                    message = "User dosent exist";
+                if (tryToUpdateUser.modifiedCount === 0) {
+                    message = "User doesn't exist or wasn't modified";
                     return {
                         error: true,
                         message: message,
