@@ -128,12 +128,12 @@ export class AuthModel {
       }
    }
 
-   async signOut({ _id }: Users) {
+   async signOut({ userAccesToken }: Users) {
       let message;
       try {
          const tryToUpdateUser = await this.userCollection.updateOne(
             {
-               _id: new ObjectId(_id),
+               userAccesToken: userAccesToken,
             },
             {
                $set: {

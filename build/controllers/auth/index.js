@@ -85,13 +85,13 @@ class AuthController {
             }
         });
         this.signOut = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { _id } = req.body;
+            const { userAccesToken } = req.body;
             let result = {
                 error: true,
                 message: "Something went wrong signout",
             };
             try {
-                result = yield this.authModel.signOut({ _id });
+                result = yield this.authModel.signOut({ userAccesToken });
                 if (result.error)
                     return res.status(400).json(result);
                 return res.status(200).json(result.message);

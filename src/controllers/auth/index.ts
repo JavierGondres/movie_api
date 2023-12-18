@@ -94,7 +94,7 @@ export class AuthController {
    };
 
    signOut = async (req: Request, res: Response) => {
-      const { _id } = req.body;
+      const { userAccesToken } = req.body;
       let result: {
          error: boolean;
          message: string;
@@ -104,7 +104,7 @@ export class AuthController {
       };
 
       try {
-         result = await this.authModel.signOut({ _id });
+         result = await this.authModel.signOut({ userAccesToken });
          if (result.error) return res.status(400).json(result);
 
          return res.status(200).json(result.message);

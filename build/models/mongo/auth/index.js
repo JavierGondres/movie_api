@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthModel = void 0;
-const mongodb_1 = require("mongodb");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
@@ -117,12 +116,12 @@ class AuthModel {
             }
         });
     }
-    signOut({ _id }) {
+    signOut({ userAccesToken }) {
         return __awaiter(this, void 0, void 0, function* () {
             let message;
             try {
                 const tryToUpdateUser = yield this.userCollection.updateOne({
-                    _id: new mongodb_1.ObjectId(_id),
+                    userAccesToken: userAccesToken,
                 }, {
                     $set: {
                         isValid: false,

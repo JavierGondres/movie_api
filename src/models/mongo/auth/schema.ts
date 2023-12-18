@@ -38,9 +38,9 @@ export const signInSchema = [
 ];
 
 export const signOutSchema = [
-   body("_id")
-      .isMongoId()
-      .withMessage("Invalid id")
+   body("userAccesToken")
+      .isString()
+      .withMessage("Invalid userAccesToken")
       .notEmpty()
-      .withMessage("id required"),
+      .withMessage("userAccesToken required"),
 ];
