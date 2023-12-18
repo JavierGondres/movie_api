@@ -38,6 +38,11 @@ export const signInSchema = [
 ];
 
 export const signOutSchema = [
+   body("_id")
+      .isMongoId()
+      .withMessage("Invalid _id")
+      .notEmpty()
+      .withMessage("_id required"),
    body("userAccesToken")
       .isString()
       .withMessage("Invalid userAccesToken")

@@ -4,10 +4,10 @@ import { Props } from "./types";
 dotenv.config();
 
 
-export const generateJWT = async ({ userName, userRole}: Props) => {
+export const generateJWT = async ({userRole}: Props) => {
    try {
-      console.log(userName, userRole)
-      const payload = { userName, userRole };
+      console.log(userRole)
+      const payload = { userRole };
       const userAccesToken = jwt.sign(payload, process.env.JWT || '');
       return { error: false, userAccesToken };
    } catch (error) {

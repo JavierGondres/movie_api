@@ -2,25 +2,21 @@ import { Collection, ObjectId, Document, WithId } from "mongodb";
 import { Users } from "../types";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
+import { generateJWT } from "../../../middleware/generateJWT";
 dotenv.config();
-
-interface SignInPayload extends Users {
-   newAccesToken: string;
-}
 
 export class AuthModel {
    private userCollection: Collection<Document>;
-   constructor(userCollection: Collection<Document>) {
+   private userSessionsCollection: Collection<Document>;
+   constructor(
+      userCollection: Collection<Document>,
+      userSessionsCollection: Collection<Document>
+   ) {
       this.userCollection = userCollection;
+      this.userSessionsCollection = userSessionsCollection;
    }
 
-   async signUp({
-      userName,
-      userEmail,
-      userPassword,
-      userRole,
-      userAccesToken,
-   }: Users) {
+   async signUp({ userName, userEmail, userPassword, userRole }: Users) {
       let message;
       const passwordHash = await bcrypt.hash(userPassword.toString(), 8);
       try {
@@ -42,12 +38,18 @@ export class AuthModel {
             userName: userName,
             userEmail: userEmail,
             userPassword: passwordHash,
-            userAccesToken: userAccesToken,
             userRole: userRole ?? "User",
             isValid: true,
          };
 
          await this.userCollection.insertOne(newUser);
+
+         const userSessions = {
+            _id: newUser._id,
+            userSessions: [],
+         };
+
+         await this.userSessionsCollection.insertOne(userSessions);
 
          message = "User created";
          return {
@@ -64,7 +66,7 @@ export class AuthModel {
       }
    }
 
-   async signIn({ userEmail, userPassword, newAccesToken }: SignInPayload) {
+   async signIn({ userEmail, userPassword }: Users) {
       let message;
       const existUser: WithId<Document> | null = await this.findUser({
          userEmail: userEmail,
@@ -92,21 +94,33 @@ export class AuthModel {
                message: message,
             };
          }
-         console.log(newAccesToken)
-         const tryToUpdateAccesToken = await this.userCollection.updateOne(
-            {
-               userAccesToken: user.userAccesToken,
-            },
-            {
-               $set: {
-                  userAccesToken: newAccesToken,
-                  isValid: true,
-               },
-            }
-         );
 
-         if (!tryToUpdateAccesToken) {
-            message = "Error updating accesToken, user dosent found";
+         const { error, userAccesToken } = await generateJWT({
+            userRole: user.userRole,
+         });
+
+         if (error) {
+            message =
+               "Couldn't create access token. Please try again later signIn.";
+            return {
+               error: true,
+               message: message,
+            };
+         }
+
+         try {
+            const accesToken = {
+               userAccesToken: userAccesToken,
+               isValid: true,
+            };
+
+            await this.userSessionsCollection.updateOne(
+               { _id: new ObjectId(user._id) },
+               { $push: { userSessions: [accesToken] } }
+            );
+         } catch (error) {
+            console.log(error);
+            message = `Somethin went wron trying to login and create token`;
             return {
                error: true,
                message: message,
@@ -128,21 +142,22 @@ export class AuthModel {
       }
    }
 
-   async signOut({ userAccesToken }: Users) {
+   async signOut({ userAccesToken, _id }: Users) {
       let message;
       try {
-         const tryToUpdateUser = await this.userCollection.updateOne(
+         
+         const removeToken = await this.userSessionsCollection.updateOne(
+            { _id: new ObjectId(_id) },
             {
-               userAccesToken: userAccesToken,
-            },
-            {
-               $set: {
-                  isValid: false,
+               $pull: {
+                  userSessions: {
+                     $elemMatch: { userAccesToken: userAccesToken },
+                  },
                },
             }
          );
 
-         if (tryToUpdateUser.modifiedCount === 0) {
+         if (removeToken.modifiedCount === 0) {
             message = "User doesn't exist or wasn't modified";
             return {
                error: true,
@@ -155,6 +170,7 @@ export class AuthModel {
             error: false,
             message: message,
          };
+
       } catch (error) {
          console.log(error);
          message = "Problems with logging out";

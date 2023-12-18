@@ -38,7 +38,7 @@ const users_1 = require("./routes/users");
 const auth_1 = require("./routes/auth");
 const movies_1 = require("./routes/movies");
 // import cors from "cors";
-const createApp = ({ userModel, authModel, movieModel, userCollection, }) => __awaiter(void 0, void 0, void 0, function* () {
+const createApp = ({ userModel, authModel, movieModel, userCollection, userSessionCollection }) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const app = (0, express_1.default)();
     app.use((0, express_1.json)());

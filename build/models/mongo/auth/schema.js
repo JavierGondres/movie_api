@@ -38,6 +38,11 @@ exports.signInSchema = [
         .withMessage("password is required"),
 ];
 exports.signOutSchema = [
+    (0, express_validator_1.body)("_id")
+        .isMongoId()
+        .withMessage("Invalid _id")
+        .notEmpty()
+        .withMessage("_id required"),
     (0, express_validator_1.body)("userAccesToken")
         .isString()
         .withMessage("Invalid userAccesToken")

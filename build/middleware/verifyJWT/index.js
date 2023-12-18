@@ -52,7 +52,6 @@ class ValidateToken {
                         return res.status(401).json(result);
                     }
                     console.log("JWT", decoded);
-                    req.decodedUserName = decoded.userName;
                     req.decodedUserRole = decoded.userRole;
                     req.isValid = user === null || user === void 0 ? void 0 : user.isValid;
                     next();

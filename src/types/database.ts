@@ -5,5 +5,6 @@ export interface Database {
     movieModel: any;
     authModel: any;
     userCollection: Collection<Document>;
+    userSessionCollection: Collection<Document>;
     movieCollection: Collection<Document>;
 }

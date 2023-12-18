@@ -9,6 +9,7 @@ export const createApp = async ({
    authModel,
    movieModel,
    userCollection,
+   userSessionCollection
 }: Database) => {
    const app = express();
    app.use(json());

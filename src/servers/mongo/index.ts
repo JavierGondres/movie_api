@@ -12,11 +12,15 @@ const userCollection = MongoSingleton.getClient()
 const movieCollection = MongoSingleton.getClient()
    .db(DB.movie_api)
    .collection(DBCollections.MOVIES);
+const userSessionCollection = MongoSingleton.getClient()
+   .db(DB.movie_api)
+   .collection(DBCollections.USER_SESSIONS);
 
 createApp({
    userModel: new UserModel(userCollection),
-   authModel: new AuthModel(userCollection),
+   authModel: new AuthModel(userCollection, userSessionCollection),
    movieModel: new MovieModel(movieCollection),
    userCollection: userCollection as unknown as Collection<Document>,
    movieCollection: movieCollection as unknown as Collection<Document>,
+   userSessionCollection: userSessionCollection as unknown as Collection<Document>,
 });

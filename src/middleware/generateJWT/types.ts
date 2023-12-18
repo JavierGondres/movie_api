@@ -1,4 +1,4 @@
 export type Props = {
-    userName: string
+    // userName: string
     userRole: string
 }
