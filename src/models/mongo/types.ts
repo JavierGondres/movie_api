@@ -10,6 +10,13 @@ export interface Users {
    isValid: boolean;
 }
 
+export type Logs = {
+   title?: string;
+   rentalPrice?: number;
+   salePrice?: number;
+   modifiedDate?: Date;
+};
+
 export interface Movies {
    _id: string;
    title: string;
@@ -20,4 +27,6 @@ export interface Movies {
    salePrice: number;
    availability: boolean;
    lastModifiedDate: Date;
+   likes: number;
+   updatesLog: Array<Logs>;
 }

@@ -27,12 +27,14 @@ export class MovieController {
          message: "Something went wrong",
       };
 
+      const date = new Date(lastModifiedDate)
+
       try {
          result = await this.movieModel.createMovie({
             availability,
             description,
             imageURL,
-            lastModifiedDate,
+            lastModifiedDate: date,
             rentalPrice,
             salePrice,
             stock,

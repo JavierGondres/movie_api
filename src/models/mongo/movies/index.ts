@@ -38,6 +38,8 @@ export class MovieModel {
             salePrice:salePrice,
             stock:stock,
             title:title,
+            likes: 0,
+            updatesLog: []
          };
 
          await this.userCollection.insertOne(newMovie);

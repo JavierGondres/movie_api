@@ -35,6 +35,8 @@ class MovieModel {
                     salePrice: salePrice,
                     stock: stock,
                     title: title,
+                    likes: 0,
+                    updatesLog: []
                 };
                 yield this.userCollection.insertOne(newMovie);
                 message = "Movie created";

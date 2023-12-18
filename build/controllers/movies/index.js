@@ -18,12 +18,13 @@ class MovieController {
                 error: false,
                 message: "Something went wrong",
             };
+            const date = new Date(lastModifiedDate);
             try {
                 result = yield this.movieModel.createMovie({
                     availability,
                     description,
                     imageURL,
-                    lastModifiedDate,
+                    lastModifiedDate: date,
                     rentalPrice,
                     salePrice,
                     stock,
