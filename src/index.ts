@@ -21,13 +21,14 @@ export const createApp = async ({
    );
    app.use(
       "/auth",
-      createAuthRouter({ authModel: authModel, userCollection: userCollection })
+      createAuthRouter({ authModel: authModel, userCollection: userCollection, userSessionCollection: userSessionCollection })
    );
    app.use(
       "/movies",
       createMovieRouter({
          movieModel: movieModel,
          userCollection: userCollection,
+         userSessionCollection: userSessionCollection
       })
    );
 

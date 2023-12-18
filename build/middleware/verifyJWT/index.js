@@ -15,9 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ValidateToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 class ValidateToken {
-    constructor(userCollection) {
+    constructor(userSessionsCollection) {
         this.validateToken = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            const authorizationHeader = req.headers['authorization'];
+            const authorizationHeader = req.headers["authorization"];
             let result;
             if (!authorizationHeader) {
                 console.log(authorizationHeader);
@@ -28,7 +28,7 @@ class ValidateToken {
             }
             const token = authorizationHeader.split(" ")[1];
             try {
-                let user = (yield this.userCollection.findOne({
+                let user = (yield this.userSessionsCollection.findOne({
                     userAccesToken: token,
                 }));
                 if (!user) {
@@ -53,7 +53,7 @@ class ValidateToken {
                     }
                     console.log("JWT", decoded);
                     req.decodedUserRole = decoded.userRole;
-                    req.isValid = user === null || user === void 0 ? void 0 : user.isValid;
+                    // req.isValid = user?.isValid;
                     next();
                 });
             }
@@ -64,7 +64,7 @@ class ValidateToken {
                     .json({ message: "Something went wrong in authorization" });
             }
         });
-        this.userCollection = userCollection;
+        this.userSessionsCollection = userSessionsCollection;
     }
 }
 exports.ValidateToken = ValidateToken;

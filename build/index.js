@@ -44,10 +44,11 @@ const createApp = ({ userModel, authModel, movieModel, userCollection, userSessi
     app.use((0, express_1.json)());
     app.disable("x-powered-by");
     app.use("/users", (0, users_1.createUserRouter)({ userModel: userModel, userCollection: userCollection }));
-    app.use("/auth", (0, auth_1.createAuthRouter)({ authModel: authModel, userCollection: userCollection }));
+    app.use("/auth", (0, auth_1.createAuthRouter)({ authModel: authModel, userCollection: userCollection, userSessionCollection: userSessionCollection }));
     app.use("/movies", (0, movies_1.createMovieRouter)({
         movieModel: movieModel,
         userCollection: userCollection,
+        userSessionCollection: userSessionCollection
     }));
     const PORT = (_a = process.env.PORT) !== null && _a !== void 0 ? _a : 1234;
     app.listen(PORT, () => {

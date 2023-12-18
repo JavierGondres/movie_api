@@ -39,7 +39,6 @@ export class AuthModel {
             userEmail: userEmail,
             userPassword: passwordHash,
             userRole: userRole ?? "User",
-            isValid: true,
          };
 
          await this.userCollection.insertOne(newUser);
@@ -114,7 +113,7 @@ export class AuthModel {
             //    { _id: new ObjectId(user._id) },
             //    { $push: { userSessions: [accesToken] } }
             // );
-            
+
          } catch (error) {
             console.log(error);
             message = `Somethin went wron trying to login and create token`;

@@ -7,22 +7,22 @@ declare module "express" {
    interface Request {
       decodedUserName?: any;
       decodedUserRole?: any;
-      isValid?:any
+      isValid?: any;
    }
 }
 
 export class ValidateToken {
-   private userCollection: Collection<Document>;
-   constructor(userCollection: Collection<Document>) {
-      this.userCollection = userCollection;
+   private userSessionsCollection: Collection<Document>;
+   constructor(userSessionsCollection: Collection<Document>) {
+      this.userSessionsCollection = userSessionsCollection;
    }
 
    validateToken = async (req: Request, res: Response, next: () => void) => {
-      const authorizationHeader = req.headers['authorization'];
+      const authorizationHeader = req.headers["authorization"];
       let result: any;
 
       if (!authorizationHeader) {
-         console.log(authorizationHeader)
+         console.log(authorizationHeader);
          return res.status(401).json({
             error: true,
             message: "Access token is missing",
@@ -32,12 +32,12 @@ export class ValidateToken {
       const token = authorizationHeader.split(" ")[1];
 
       try {
-         let user: Users | null = (await this.userCollection.findOne({
+         let user: Users | null = (await this.userSessionsCollection.findOne({
             userAccesToken: token,
          })) as Users | null;
 
          if (!user) {
-            console.log(token)
+            console.log(token);
             result = {
                error: true,
                message: "Authorization denied",
@@ -51,7 +51,7 @@ export class ValidateToken {
             process.env.JWT || "",
             (err: any, decoded: any) => {
                if (err) {
-                  console.log(err)
+                  console.log(err);
                   return res.status(403).json({ message: "Forbidden r37226" });
                }
                if (!user?.userName === decoded.userName) {
@@ -62,9 +62,9 @@ export class ValidateToken {
 
                   return res.status(401).json(result);
                }
-               console.log("JWT", decoded)
+               console.log("JWT", decoded);
                req.decodedUserRole = decoded.userRole;
-               req.isValid = user?.isValid;
+               // req.isValid = user?.isValid;
                next();
             }
          );

@@ -43,7 +43,6 @@ class AuthModel {
                     userEmail: userEmail,
                     userPassword: passwordHash,
                     userRole: userRole !== null && userRole !== void 0 ? userRole : "User",
-                    isValid: true,
                 };
                 yield this.userCollection.insertOne(newUser);
                 message = "User created";
