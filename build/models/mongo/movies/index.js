@@ -63,17 +63,6 @@ class MovieModel {
         return __awaiter(this, void 0, void 0, function* () {
             let message;
             console.log(_id);
-            // const movieObj: Partial<Document & { _id?: ObjectId }> = {
-            //    availability: availability,
-            //    description: description,
-            //    imageURL: imageURL,
-            //    lastModifiedDate: new Date(),
-            //    rentalPrice: rentalPrice,
-            //    salePrice: salePrice,
-            //    stock: stock,
-            //    title: title,
-            // };
-            // console.log(movieObj);
             try {
                 const updatedMovie = yield this.movieCollection.updateOne({ _id: new mongodb_1.ObjectId(_id) }, { $set: movieObj });
                 if (updatedMovie.modifiedCount === 0) {
@@ -86,7 +75,6 @@ class MovieModel {
                 try {
                     const { title, rentalPrice, salePrice, _id } = movieObj;
                     const movieLog = Object.assign(Object.assign(Object.assign(Object.assign({ movieId: new mongodb_1.ObjectId(_id) }, (title && { title })), (rentalPrice && { rentalPrice })), (salePrice && { salePrice })), { lastModifiedDate: movieObj.lastModifiedDate });
-                    console.log(movieLog);
                     yield this.moviesLogsCollection.insertOne(movieLog);
                 }
                 catch (error) {

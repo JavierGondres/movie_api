@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MovieController = void 0;
+const enum_1 = require("../../types/enum");
 class MovieController {
     constructor({ movieModel }) {
         this.createMovie = (req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -44,8 +45,7 @@ class MovieController {
                 error: false,
                 message: "Something went wrong",
             };
-            const movieObj = {
-                availability,
+            let commonProperties = {
                 description,
                 imageURL,
                 lastModifiedDate: new Date(),
@@ -54,6 +54,15 @@ class MovieController {
                 stock,
                 title,
             };
+            let movieObj;
+            if (req.decodedUserRole === enum_1.Roles.ADMIN) {
+                // Si el usuario es un administrador, agregamos la propiedad availability
+                movieObj = Object.assign(Object.assign({}, commonProperties), { availability });
+            }
+            else {
+                // Si no es un administrador, simplemente asignamos las propiedades comunes
+                movieObj = Object.assign({}, commonProperties);
+            }
             try {
                 result = yield this.movieModel.updateMovie(_id, movieObj);
                 if (result.error)

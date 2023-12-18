@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Movies } from "../../models/mongo/types";
+import { Roles } from "../../types/enum";
 
 export class MovieController {
    movieModel: any;
@@ -67,8 +68,9 @@ export class MovieController {
          message: "Something went wrong",
       };
 
-      const movieObj: Partial<Movies & { likes?: number; updatesLog?: [] }> = {
-         availability,
+      let commonProperties: Partial<
+         Movies & { likes?: number; updatesLog?: [] }
+      > = {
          description,
          imageURL,
          lastModifiedDate: new Date(),
@@ -78,11 +80,20 @@ export class MovieController {
          title,
       };
 
+      let movieObj: Partial<Movies & { likes?: number; updatesLog?: [] }>;
+
+      if (req.decodedUserRole === Roles.ADMIN) {
+         // Si el usuario es un administrador, agregamos la propiedad availability
+         movieObj = {
+            ...commonProperties,
+            availability,
+         };
+      } else {
+         // Si no es un administrador, simplemente asignamos las propiedades comunes
+         movieObj = { ...commonProperties };
+      }
       try {
-         result = await this.movieModel.updateMovie(
-            _id,
-            movieObj,
-         );
+         result = await this.movieModel.updateMovie(_id, movieObj);
 
          if (result.error) return res.status(400).json(result);
          return res.status(200).json(result.message);

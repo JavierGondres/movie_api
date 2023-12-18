@@ -71,18 +71,6 @@ export class MovieModel {
    ) {
       let message;
       console.log(_id);
-      // const movieObj: Partial<Document & { _id?: ObjectId }> = {
-      //    availability: availability,
-      //    description: description,
-      //    imageURL: imageURL,
-      //    lastModifiedDate: new Date(),
-      //    rentalPrice: rentalPrice,
-      //    salePrice: salePrice,
-      //    stock: stock,
-      //    title: title,
-      // };
-
-      // console.log(movieObj);
 
       try {
          const updatedMovie = await this.movieCollection.updateOne(
@@ -107,8 +95,6 @@ export class MovieModel {
                ...(salePrice && { salePrice }),
                lastModifiedDate: movieObj.lastModifiedDate,
             };
-
-            console.log(movieLog)
 
             await this.moviesLogsCollection.insertOne(movieLog);
          } catch (error) {
