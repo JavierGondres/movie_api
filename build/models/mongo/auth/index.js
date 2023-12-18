@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthModel = void 0;
-const mongodb_1 = require("mongodb");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const generateJWT_1 = require("../../../middleware/generateJWT");
@@ -47,11 +46,6 @@ class AuthModel {
                     isValid: true,
                 };
                 yield this.userCollection.insertOne(newUser);
-                const userSessions = {
-                    _id: newUser._id,
-                    userSessions: [],
-                };
-                yield this.userSessionsCollection.insertOne(userSessions);
                 message = "User created";
                 return {
                     error: false,
@@ -104,10 +98,15 @@ class AuthModel {
                 }
                 try {
                     const accesToken = {
+                        userId: user._id,
                         userAccesToken: userAccesToken,
-                        isValid: true,
+                        // isValid: true,
                     };
-                    yield this.userSessionsCollection.updateOne({ _id: new mongodb_1.ObjectId(user._id) }, { $push: { userSessions: [accesToken] } });
+                    yield this.userSessionsCollection.insertOne(accesToken);
+                    // await this.userSessionsCollection.updateOne(
+                    //    { _id: new ObjectId(user._id) },
+                    //    { $push: { userSessions: [accesToken] } }
+                    // );
                 }
                 catch (error) {
                     console.log(error);
@@ -133,19 +132,15 @@ class AuthModel {
             }
         });
     }
-    signOut({ userAccesToken, _id }) {
+    signOut({ userAccesToken }) {
         return __awaiter(this, void 0, void 0, function* () {
             let message;
             try {
-                const removeToken = yield this.userSessionsCollection.updateOne({ _id: new mongodb_1.ObjectId(_id) }, {
-                    $pull: {
-                        userSessions: {
-                            $elemMatch: { userAccesToken: userAccesToken },
-                        },
-                    },
+                const deleteToken = yield this.userSessionsCollection.deleteOne({
+                    userAccesToken: userAccesToken,
                 });
-                if (removeToken.modifiedCount === 0) {
-                    message = "User doesn't exist or wasn't modified";
+                if (deleteToken.deletedCount === 0) {
+                    message = "User doesn't exist or wasn't deleted";
                     return {
                         error: true,
                         message: message,

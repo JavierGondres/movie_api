@@ -6,7 +6,7 @@ const auth_1 = require("../../controllers/auth");
 const schema_1 = require("../../models/mongo/auth/schema");
 const validateData_1 = require("../../middleware/validateData");
 // import { CheckIsValid } from "../../middleware/checkIsValid";
-const createAuthRouter = ({ authModel, userCollection }) => {
+const createAuthRouter = ({ authModel }) => {
     const authRouter = (0, express_1.Router)();
     const authController = new auth_1.AuthController({ authModel });
     // const validateToken = new ValidateToken(userCollection as any)

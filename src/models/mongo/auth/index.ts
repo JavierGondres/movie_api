@@ -44,13 +44,6 @@ export class AuthModel {
 
          await this.userCollection.insertOne(newUser);
 
-         const userSessions = {
-            _id: newUser._id,
-            userSessions: [],
-         };
-
-         await this.userSessionsCollection.insertOne(userSessions);
-
          message = "User created";
          return {
             error: false,
@@ -110,14 +103,18 @@ export class AuthModel {
 
          try {
             const accesToken = {
+               userId: user._id,
                userAccesToken: userAccesToken,
-               isValid: true,
+               // isValid: true,
             };
 
-            await this.userSessionsCollection.updateOne(
-               { _id: new ObjectId(user._id) },
-               { $push: { userSessions: [accesToken] } }
-            );
+            await this.userSessionsCollection.insertOne(accesToken);
+
+            // await this.userSessionsCollection.updateOne(
+            //    { _id: new ObjectId(user._id) },
+            //    { $push: { userSessions: [accesToken] } }
+            // );
+            
          } catch (error) {
             console.log(error);
             message = `Somethin went wron trying to login and create token`;
@@ -142,23 +139,16 @@ export class AuthModel {
       }
    }
 
-   async signOut({ userAccesToken, _id }: Users) {
+   async signOut({ userAccesToken }: Users) {
       let message;
       try {
-         
-         const removeToken = await this.userSessionsCollection.updateOne(
-            { _id: new ObjectId(_id) },
-            {
-               $pull: {
-                  userSessions: {
-                     $elemMatch: { userAccesToken: userAccesToken },
-                  },
-               },
-            }
-         );
 
-         if (removeToken.modifiedCount === 0) {
-            message = "User doesn't exist or wasn't modified";
+         const deleteToken = await this.userSessionsCollection.deleteOne({
+            userAccesToken: userAccesToken,
+         });
+
+         if (deleteToken.deletedCount === 0) {
+            message = "User doesn't exist or wasn't deleted";
             return {
                error: true,
                message: message,
@@ -170,7 +160,6 @@ export class AuthModel {
             error: false,
             message: message,
          };
-
       } catch (error) {
          console.log(error);
          message = "Problems with logging out";

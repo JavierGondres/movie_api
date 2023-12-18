@@ -7,7 +7,7 @@ import { validateData } from "../../middleware/validateData";
 import { Database } from "../../types/database";
 // import { CheckIsValid } from "../../middleware/checkIsValid";
 
-export const createAuthRouter = ({ authModel, userCollection }: Pick<Database, 'authModel' | 'userCollection'>) => {
+export const createAuthRouter = ({ authModel }: Pick<Database, 'authModel' | 'userCollection' | 'userSessionCollection'>) => {
    const authRouter = Router();
    const authController = new AuthController({ authModel });
    // const validateToken = new ValidateToken(userCollection as any)
