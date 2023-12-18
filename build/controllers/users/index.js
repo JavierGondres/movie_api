@@ -28,6 +28,29 @@ class UsersController {
                 return res.status(501).json({ MessageError: e });
             }
         });
+        this.purchase = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { _id, movieId, userName, quantity, salePrice } = req.body;
+            let result = {
+                error: false,
+                message: "Something went wrong",
+            };
+            try {
+                result = yield this.userModel.purchase({
+                    _id,
+                    movieId,
+                    userName,
+                    quantity,
+                    salePrice,
+                });
+                if (result.error)
+                    return res.status(400).json(result);
+                return res.status(200).json(result.message);
+            }
+            catch (e) {
+                console.log(e);
+                return res.status(501).json(result);
+            }
+        });
         this.userModel = userModel;
     }
 }

@@ -30,3 +30,10 @@ export interface Movies {
    likes: number;
    updatesLog: Array<Logs>;
 }
+
+
+export interface Purchases {
+   quantity: number;
+   purchasedDate: Date;
+   salePrice: number;
+}

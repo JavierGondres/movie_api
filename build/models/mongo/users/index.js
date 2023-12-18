@@ -10,9 +10,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserModel = void 0;
+const mongodb_1 = require("mongodb");
 class UserModel {
-    constructor(userCollection) {
+    constructor(userCollection, movieCollection, purchasesCollection, movieModel) {
         this.userCollection = userCollection;
+        this.movieCollection = movieCollection;
+        this.purchasesCollection = purchasesCollection;
+        this.movieModel = movieModel;
     }
     getAll() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -26,15 +30,59 @@ class UserModel {
             }
         });
     }
-    purchase({ _id }) {
+    purchase({ _id, movieId, userName, quantity, salePrice, }) {
         return __awaiter(this, void 0, void 0, function* () {
+            let message;
             try {
-                const users = yield this.userCollection.find({}).toArray();
-                console.log(users);
-                return users;
+                const purchaseObj = {
+                    userId: _id,
+                    userName: userName,
+                    quantity: quantity,
+                    purchasedDate: new Date(),
+                    salePrice: salePrice,
+                };
+                console.log("movieID", movieId);
+                yield this.purchasesCollection.insertOne(purchaseObj);
+                try {
+                    const existMovie = (yield this.movieCollection.findOne({
+                        _id: new mongodb_1.ObjectId(movieId),
+                    }));
+                    if (!existMovie) {
+                        message = "Movie dosent exist, purchase error";
+                        return {
+                            error: true,
+                            message: message,
+                        };
+                    }
+                    const newStock = {
+                        stock: existMovie.stock - (quantity !== null && quantity !== void 0 ? quantity : 0),
+                    };
+                    const result = yield this.movieModel.updateMovie(movieId, newStock);
+                    if (result.error) {
+                        return result;
+                    }
+                }
+                catch (e) {
+                    console.log(e);
+                    message = "Error trying to reduce stock";
+                    return {
+                        error: true,
+                        message: message,
+                    };
+                }
+                message = "Purchased";
+                return {
+                    error: false,
+                    message: message,
+                };
             }
             catch (error) {
-                return null;
+                console.log(error);
+                message = "Something went wrong buying";
+                return {
+                    error: true,
+                    message: message,
+                };
             }
         });
     }

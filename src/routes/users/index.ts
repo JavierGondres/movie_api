@@ -5,11 +5,11 @@ import { ValidateToken } from "../../middleware/verifyJWT";
 import { isAdmin } from "../../middleware/isAdmin";
 import { Database } from "../../types/database";
 
-export const createUserRouter = ({ userModel, userCollection }: Pick<Database, 'userModel' | 'userCollection'>) => {
+export const createUserRouter = ({ userModel, userSessionCollection}: Pick<Database, 'userModel' | 'userSessionCollection'>) => {
    const usersRouter = Router();
    const usersController = new UsersController({ userModel });
 
-   const validateToken = new ValidateToken(userCollection as any);
+   const validateToken = new ValidateToken(userSessionCollection as any);
 
 
    /*
@@ -18,6 +18,7 @@ export const createUserRouter = ({ userModel, userCollection }: Pick<Database, '
    y asi no se pierde el contexto "this"
    */
    usersRouter.get("/", [validateToken.validateToken, isAdmin], usersController.getAll);
+   usersRouter.post("/purchase", usersController.purchase);
 
    return usersRouter;
 };
