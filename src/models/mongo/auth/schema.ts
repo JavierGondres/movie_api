@@ -36,11 +36,3 @@ export const signInSchema = [
       .notEmpty()
       .withMessage("password is required"),
 ];
-
-export const signOutSchema = [
-   body("userAccesToken")
-      .isString()
-      .withMessage("Invalid userAccesToken")
-      .notEmpty()
-      .withMessage("userAccesToken required"),
-];

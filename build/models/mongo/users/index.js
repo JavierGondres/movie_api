@@ -26,5 +26,17 @@ class UserModel {
             }
         });
     }
+    purchase({ _id }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const users = yield this.userCollection.find({}).toArray();
+                console.log(users);
+                return users;
+            }
+            catch (error) {
+                return null;
+            }
+        });
+    }
 }
 exports.UserModel = UserModel;

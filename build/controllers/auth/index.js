@@ -56,7 +56,9 @@ class AuthController {
             }
         });
         this.signOut = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { _id, userAccesToken } = req.body;
+            const { _id } = req.body;
+            const authorizationHeader = req.headers["authorization"];
+            const userAccesToken = authorizationHeader === null || authorizationHeader === void 0 ? void 0 : authorizationHeader.split(" ")[1];
             let result = {
                 error: true,
                 message: "Something went wrong signout",

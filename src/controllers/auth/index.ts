@@ -63,7 +63,11 @@ export class AuthController {
    };
 
    signOut = async (req: Request, res: Response) => {
-      const {_id , userAccesToken} = req.body;
+      const {_id} = req.body;
+      
+      const authorizationHeader = req.headers["authorization"];
+      const userAccesToken = authorizationHeader?.split(" ")[1];
+
       let result: {
          error: boolean;
          message: string;
