@@ -1,4 +1,4 @@
-import { body, check } from "express-validator";
+import { ValidationChain, body } from "express-validator";
 
 export const movieSchema = [
    body("availability")
@@ -16,21 +16,6 @@ export const movieSchema = [
       .withMessage("invalid imageURL")
       .notEmpty()
       .withMessage("imageURL is required"),
-   check("lastModifiedDate")
-      .trim()
-      .custom((value) => {
-         const parsedDate = new Date(value);
-
-         if (isNaN(parsedDate as unknown as number)) {
-            throw new Error("Must be a valid date");
-         }
-
-         if (parsedDate > new Date()) {
-            throw new Error("Must be a valid date");
-         }
-
-         return true;
-      }),
    body("rentalPrice")
       .isNumeric()
       .withMessage("Invalid rentalPrice")
@@ -52,3 +37,11 @@ export const movieSchema = [
       .notEmpty()
       .withMessage("title is required"),
 ];
+
+export const updateMovieSchema: ValidationChain[] = movieSchema.concat([
+   body("_id")
+     .isMongoId()
+     .withMessage("_id is required")
+     .notEmpty()
+     .withMessage("_id is required"),
+ ]);

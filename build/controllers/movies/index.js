@@ -13,23 +13,49 @@ exports.MovieController = void 0;
 class MovieController {
     constructor({ movieModel }) {
         this.createMovie = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { availability, description, imageURL, lastModifiedDate, rentalPrice, salePrice, stock, title, } = req.body;
+            const { availability, description, imageURL, rentalPrice, salePrice, stock, title, } = req.body;
             let result = {
                 error: false,
                 message: "Something went wrong",
             };
-            const date = new Date(lastModifiedDate);
             try {
                 result = yield this.movieModel.createMovie({
                     availability,
                     description,
                     imageURL,
-                    lastModifiedDate: date,
+                    lastModifiedDate: new Date(),
                     rentalPrice,
                     salePrice,
                     stock,
                     title,
                 });
+                if (result.error)
+                    return res.status(400).json(result);
+                return res.status(200).json(result.message);
+            }
+            catch (e) {
+                console.log(e);
+                return res.status(501).json(result);
+            }
+        });
+        this.updateMovie = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { _id, availability, description, imageURL, rentalPrice, salePrice, stock, title, } = req.body;
+            let result = {
+                error: false,
+                message: "Something went wrong",
+            };
+            const movieObj = {
+                availability,
+                description,
+                imageURL,
+                lastModifiedDate: new Date(),
+                rentalPrice,
+                salePrice,
+                stock,
+                title,
+            };
+            try {
+                result = yield this.movieModel.updateMovie(_id, movieObj);
                 if (result.error)
                     return res.status(400).json(result);
                 return res.status(200).json(result.message);

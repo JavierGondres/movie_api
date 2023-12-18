@@ -10,14 +10,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MovieModel = void 0;
+const mongodb_1 = require("mongodb");
 class MovieModel {
-    constructor(userCollection) {
-        this.userCollection = userCollection;
+    constructor(movieCollection, moviesLogsCollection) {
+        this.movieCollection = movieCollection;
+        this.moviesLogsCollection = moviesLogsCollection;
     }
     createMovie({ availability, description, imageURL, lastModifiedDate, rentalPrice, salePrice, stock, title, }) {
         return __awaiter(this, void 0, void 0, function* () {
             let message;
-            const existMovie = yield this.findMovieByTitle({ title: title });
+            const existMovie = yield this.findMovieByTitle({
+                title: title,
+            });
             if (existMovie) {
                 message = "That movie already exist";
                 return {
@@ -36,9 +40,9 @@ class MovieModel {
                     stock: stock,
                     title: title,
                     likes: 0,
-                    updatesLog: []
+                    updatesLog: [],
                 };
-                yield this.userCollection.insertOne(newMovie);
+                yield this.movieCollection.insertOne(newMovie);
                 message = "Movie created";
                 return {
                     error: false,
@@ -55,9 +59,63 @@ class MovieModel {
             }
         });
     }
+    updateMovie(_id, movieObj) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let message;
+            console.log(_id);
+            // const movieObj: Partial<Document & { _id?: ObjectId }> = {
+            //    availability: availability,
+            //    description: description,
+            //    imageURL: imageURL,
+            //    lastModifiedDate: new Date(),
+            //    rentalPrice: rentalPrice,
+            //    salePrice: salePrice,
+            //    stock: stock,
+            //    title: title,
+            // };
+            // console.log(movieObj);
+            try {
+                const updatedMovie = yield this.movieCollection.updateOne({ _id: new mongodb_1.ObjectId(_id) }, { $set: movieObj });
+                if (updatedMovie.modifiedCount === 0) {
+                    message = "That movie dosent exist or wasnt modified";
+                    return {
+                        error: true,
+                        message: message,
+                    };
+                }
+                try {
+                    const { title, rentalPrice, salePrice, _id } = movieObj;
+                    const movieLog = Object.assign(Object.assign(Object.assign(Object.assign({ movieId: new mongodb_1.ObjectId(_id) }, (title && { title })), (rentalPrice && { rentalPrice })), (salePrice && { salePrice })), { lastModifiedDate: movieObj.lastModifiedDate });
+                    console.log(movieLog);
+                    yield this.moviesLogsCollection.insertOne(movieLog);
+                }
+                catch (error) {
+                    console.log(error);
+                    message = "Something went wrong creating movieLog";
+                    return {
+                        error: true,
+                        message: message,
+                    };
+                }
+                message = "Movie updated";
+                return {
+                    error: false,
+                    message: message,
+                };
+            }
+            catch (error) {
+                console.log(error);
+                message = "Something went wrong updating movie";
+                return {
+                    error: true,
+                    message: message,
+                };
+            }
+        });
+    }
     findMovieByTitle({ title }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const existMovie = yield this.userCollection.findOne({
+            const existMovie = yield this.movieCollection.findOne({
                 title: title,
             });
             return existMovie;

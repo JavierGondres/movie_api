@@ -8,13 +8,12 @@ const movies_1 = require("../../controllers/movies");
 const schema_1 = require("../../models/mongo/movies/schema");
 const isAdmin_1 = require("../../middleware/isAdmin");
 // import { CheckIsValid } from "../../middleware/checkIsValid";
-const createMovieRouter = ({ movieModel, userSessionCollection }) => {
+const createMovieRouter = ({ movieModel, userSessionCollection, }) => {
     const movieRouter = (0, express_1.Router)();
     const movieController = new movies_1.MovieController({ movieModel });
     const validateToken = new verifyJWT_1.ValidateToken(userSessionCollection);
-    // const checkIsValid = new CheckIsValid()
     movieRouter.post("/", [(0, validateData_1.validateData)(schema_1.movieSchema), validateToken.validateToken, isAdmin_1.isAdmin], movieController.createMovie);
-    //    movieRouter.post("/signUp", validateData(signUpSchema), movieController.signUp);
+    movieRouter.put("/", (0, validateData_1.validateData)(schema_1.updateMovieSchema), validateToken.validateToken, isAdmin_1.isAdmin, movieController.updateMovie);
     return movieRouter;
 };
 exports.createMovieRouter = createMovieRouter;

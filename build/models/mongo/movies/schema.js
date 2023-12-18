@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.movieSchema = void 0;
+exports.updateMovieSchema = exports.movieSchema = void 0;
 const express_validator_1 = require("express-validator");
 exports.movieSchema = [
     (0, express_validator_1.body)("availability")
@@ -18,18 +18,6 @@ exports.movieSchema = [
         .withMessage("invalid imageURL")
         .notEmpty()
         .withMessage("imageURL is required"),
-    (0, express_validator_1.check)("lastModifiedDate")
-        .trim()
-        .custom((value) => {
-        const parsedDate = new Date(value);
-        if (isNaN(parsedDate)) {
-            throw new Error("Must be a valid date");
-        }
-        if (parsedDate > new Date()) {
-            throw new Error("Must be a valid date");
-        }
-        return true;
-    }),
     (0, express_validator_1.body)("rentalPrice")
         .isNumeric()
         .withMessage("Invalid rentalPrice")
@@ -51,3 +39,10 @@ exports.movieSchema = [
         .notEmpty()
         .withMessage("title is required"),
 ];
+exports.updateMovieSchema = exports.movieSchema.concat([
+    (0, express_validator_1.body)("_id")
+        .isMongoId()
+        .withMessage("_id is required")
+        .notEmpty()
+        .withMessage("_id is required"),
+]);

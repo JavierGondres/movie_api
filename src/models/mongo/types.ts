@@ -18,7 +18,7 @@ export type Logs = {
 };
 
 export interface Movies {
-   _id: string;
+   _id: ObjectId;
    title: string;
    description: string;
    imageURL: string;
