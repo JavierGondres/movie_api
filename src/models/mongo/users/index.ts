@@ -1,4 +1,4 @@
-import { Collection, Document, ObjectId, WithId } from "mongodb";
+import { Collection, Document, ObjectId } from "mongodb";
 import { Movies, Purchases, Users } from "../types";
 
 export class UserModel {
@@ -35,8 +35,43 @@ export class UserModel {
       userName,
       quantity,
       salePrice,
-   }: Partial<Users & Purchases & Movies & {movieId: ObjectId}>) {
+   }: Partial<Users & Purchases & Movies & { movieId: ObjectId }>) {
       let message;
+      let existMovie: Movies;
+
+      try {
+         existMovie = (await this.movieCollection.findOne({
+            _id: new ObjectId(movieId),
+         })) as Movies;
+
+         if (!existMovie) {
+            message = "Movie dosent exist, purchase error";
+            return {
+               error: true,
+               message: message,
+            };
+         } else if (existMovie.stock < (quantity ?? 0)) {
+            message = "Theres not enough items in stock";
+            return {
+               error: true,
+               message: message,
+            };
+         } else if (existMovie.stock === 0) {
+            message = "In stock 0";
+            return {
+               error: true,
+               message: message,
+            };
+         }
+      } catch (error) {
+         console.log(error);
+         message = "Error trying to look for a movie";
+         return {
+            error: true,
+            message: message,
+         };
+      }
+
       try {
          const purchaseObj = {
             userId: _id,
@@ -51,19 +86,6 @@ export class UserModel {
          await this.purchasesCollection.insertOne(purchaseObj);
 
          try {
-            const existMovie: WithId<Document> | null =
-               (await this.movieCollection.findOne({
-                  _id: new ObjectId(movieId),
-               })) as Movies;
-
-            if (!existMovie) {
-               message = "Movie dosent exist, purchase error";
-               return {
-                  error: true,
-                  message: message,
-               };
-            }
-
             const newStock: Partial<Movies> = {
                stock: existMovie.stock - (quantity ?? 0),
             };
@@ -74,7 +96,7 @@ export class UserModel {
                return result;
             }
          } catch (e) {
-            console.log(e)
+            console.log(e);
             message = "Error trying to reduce stock";
             return {
                error: true,

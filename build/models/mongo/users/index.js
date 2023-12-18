@@ -33,6 +33,41 @@ class UserModel {
     purchase({ _id, movieId, userName, quantity, salePrice, }) {
         return __awaiter(this, void 0, void 0, function* () {
             let message;
+            let existMovie;
+            try {
+                existMovie = (yield this.movieCollection.findOne({
+                    _id: new mongodb_1.ObjectId(movieId),
+                }));
+                if (!existMovie) {
+                    message = "Movie dosent exist, purchase error";
+                    return {
+                        error: true,
+                        message: message,
+                    };
+                }
+                else if (existMovie.stock < (quantity !== null && quantity !== void 0 ? quantity : 0)) {
+                    message = "Theres not enough items in stock";
+                    return {
+                        error: true,
+                        message: message,
+                    };
+                }
+                else if (existMovie.stock === 0) {
+                    message = "In stock 0";
+                    return {
+                        error: true,
+                        message: message,
+                    };
+                }
+            }
+            catch (error) {
+                console.log(error);
+                message = "Error trying to look for a movie";
+                return {
+                    error: true,
+                    message: message,
+                };
+            }
             try {
                 const purchaseObj = {
                     userId: _id,
@@ -44,16 +79,6 @@ class UserModel {
                 console.log("movieID", movieId);
                 yield this.purchasesCollection.insertOne(purchaseObj);
                 try {
-                    const existMovie = (yield this.movieCollection.findOne({
-                        _id: new mongodb_1.ObjectId(movieId),
-                    }));
-                    if (!existMovie) {
-                        message = "Movie dosent exist, purchase error";
-                        return {
-                            error: true,
-                            message: message,
-                        };
-                    }
                     const newStock = {
                         stock: existMovie.stock - (quantity !== null && quantity !== void 0 ? quantity : 0),
                     };
