@@ -9,6 +9,10 @@ var DBCollections;
 (function (DBCollections) {
     DBCollections["USERS"] = "Users";
     DBCollections["MOVIES"] = "Movies";
+    DBCollections["MOVIE_LOGS"] = "MoviesLogs";
+    DBCollections["RENTALS"] = "Rentals";
+    DBCollections["PURCHASES"] = "Purchases";
+    DBCollections["USER_SESSIONS"] = "UserSessions";
 })(DBCollections || (exports.DBCollections = DBCollections = {}));
 var Roles;
 (function (Roles) {
