@@ -131,4 +131,59 @@ export class MovieModel {
 
       return existMovie;
    }
+
+   async validateMovieExistence(
+      movieId: ObjectId
+   ): Promise<Movies | null> {
+      try {
+         const movie = (await this.movieCollection.findOne({
+            _id: new ObjectId(movieId),
+         })) as Movies | null;
+         return movie;
+      } catch (error) {
+         console.log(error);
+         return null;
+      }
+   }
+
+   async validateStock(
+      movie: Movies | null,
+      quantity?: number
+   ): Promise<string | null> {
+      if (!movie) {
+         return "Movie doesn't exist, purchase error";
+      } else if (movie.stock < (quantity ?? 0)) {
+         return "There's not enough items in stock";
+      } else if (movie.stock === 0) {
+         return "In stock is 0";
+      }
+
+      return null; // No hay error
+   }
+
+   async updateStock(
+      movie: Movies | null,
+      quantity?: number
+   ): Promise<string | null> {
+      if (!movie) {
+         return "Movie is null";
+      }
+
+      try {
+         const newStock: Partial<Movies> = {
+            stock: movie.stock - (quantity ?? 0),
+         };
+
+         const result = await this.updateMovie(movie._id as unknown as Pick<Movies, "_id">, newStock);
+
+         if (result.error) {
+            return "Error updating stock";
+         }
+
+         return null; // No hay error
+      } catch (error) {
+         console.log(error);
+         return "Error updating stock";
+      }
+   }
 }

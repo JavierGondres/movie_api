@@ -111,5 +111,54 @@ class MovieModel {
             return existMovie;
         });
     }
+    validateMovieExistence(movieId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const movie = (yield this.movieCollection.findOne({
+                    _id: new mongodb_1.ObjectId(movieId),
+                }));
+                return movie;
+            }
+            catch (error) {
+                console.log(error);
+                return null;
+            }
+        });
+    }
+    validateStock(movie, quantity) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!movie) {
+                return "Movie doesn't exist, purchase error";
+            }
+            else if (movie.stock < (quantity !== null && quantity !== void 0 ? quantity : 0)) {
+                return "There's not enough items in stock";
+            }
+            else if (movie.stock === 0) {
+                return "In stock is 0";
+            }
+            return null; // No hay error
+        });
+    }
+    updateStock(movie, quantity) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!movie) {
+                return "Movie is null";
+            }
+            try {
+                const newStock = {
+                    stock: movie.stock - (quantity !== null && quantity !== void 0 ? quantity : 0),
+                };
+                const result = yield this.updateMovie(movie._id, newStock);
+                if (result.error) {
+                    return "Error updating stock";
+                }
+                return null; // No hay error
+            }
+            catch (error) {
+                console.log(error);
+                return "Error updating stock";
+            }
+        });
+    }
 }
 exports.MovieModel = MovieModel;
