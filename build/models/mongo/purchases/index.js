@@ -16,17 +16,18 @@ class PurchaseModel {
         this.purchasesCollection = purchasesCollection;
         this.movieModel = movieModel;
     }
-    insertPurchase(purchaseDetails) {
+    insertPurchase(purchaseDetails, movie) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { _id, userName, quantity, salePrice, movieId } = purchaseDetails;
+                const { _id, quantity, movieId } = purchaseDetails;
                 const purchaseObj = {
                     userId: new mongodb_1.ObjectId(_id),
                     movieId: new mongodb_1.ObjectId(movieId),
-                    userName: userName,
                     quantity: quantity,
                     purchasedDate: new Date(),
-                    salePrice: salePrice,
+                    salePrice: movie === null || movie === void 0 ? void 0 : movie.salePrice,
+                    totalAmount: ((_a = movie === null || movie === void 0 ? void 0 : movie.salePrice) !== null && _a !== void 0 ? _a : 0) * (quantity !== null && quantity !== void 0 ? quantity : 0),
                 };
                 yield this.purchasesCollection.insertOne(purchaseObj);
                 return null; // No hay error
@@ -46,7 +47,7 @@ class PurchaseModel {
             if (stockValidationMessage) {
                 return { error: true, message: stockValidationMessage };
             }
-            const purchaseInsertionMessage = yield this.insertPurchase(purchaseDetails);
+            const purchaseInsertionMessage = yield this.insertPurchase(purchaseDetails, movie);
             if (purchaseInsertionMessage) {
                 return { error: true, message: purchaseInsertionMessage };
             }

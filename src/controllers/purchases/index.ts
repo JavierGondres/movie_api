@@ -7,7 +7,7 @@ export class PurchasesController {
    }
 
    purchase = async (req: Request, res: Response) => {
-      const { movieId, userName, quantity, salePrice } = req.body;
+      const { movieId, quantity } = req.body;
 
       const _id = req._id;
 
@@ -30,9 +30,7 @@ export class PurchasesController {
          result = await this.purchaseModel.purchase({
             _id,
             movieId,
-            userName,
             quantity,
-            salePrice,
          });
 
          if (result.error) return res.status(400).json(result);

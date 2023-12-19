@@ -1,5 +1,5 @@
 import { Collection, Document, ObjectId } from "mongodb";
-import {RentalPurchaseDetails} from "../types";
+import {Movies, Purchases, RentalPurchaseDetails} from "../types";
 
 export class PurchaseModel {
    private purchasesCollection: Collection<Document>;
@@ -11,18 +11,19 @@ export class PurchaseModel {
    }
 
    private async insertPurchase(
-      purchaseDetails: RentalPurchaseDetails
+      purchaseDetails: RentalPurchaseDetails,
+      movie: Movies | null
    ): Promise<string | null> {
       try {
-         const { _id, userName, quantity, salePrice, movieId } =
+         const { _id, quantity, movieId } =
             purchaseDetails;
-         const purchaseObj = {
+         const purchaseObj: Partial<Purchases> = {
             userId: new ObjectId(_id),
             movieId: new ObjectId(movieId),
-            userName: userName,
             quantity: quantity,
             purchasedDate: new Date(),
-            salePrice: salePrice,
+            salePrice: movie?.salePrice,
+            totalAmount: (movie?.salePrice ?? 0) * (quantity ?? 0),
          };
 
          await this.purchasesCollection.insertOne(purchaseObj);
@@ -49,7 +50,8 @@ export class PurchaseModel {
       }
 
       const purchaseInsertionMessage = await this.insertPurchase(
-         purchaseDetails
+         purchaseDetails,
+         movie
       );
 
       if (purchaseInsertionMessage) {

@@ -13,7 +13,7 @@ exports.PurchasesController = void 0;
 class PurchasesController {
     constructor({ purchaseModel }) {
         this.purchase = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { movieId, userName, quantity, salePrice } = req.body;
+            const { movieId, quantity } = req.body;
             const _id = req._id;
             if (!_id) {
                 return res.status(500).json({
@@ -29,9 +29,7 @@ class PurchasesController {
                 result = yield this.purchaseModel.purchase({
                     _id,
                     movieId,
-                    userName,
                     quantity,
-                    salePrice,
                 });
                 if (result.error)
                     return res.status(400).json(result);

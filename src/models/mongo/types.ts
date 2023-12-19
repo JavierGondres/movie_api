@@ -35,7 +35,7 @@ export interface Movies {
 
 export interface Purchases {
    _id: ObjectId;
-
+   userId: ObjectId;
    movieId: ObjectId;
    quantity: number;
    purchasedDate: Date;
