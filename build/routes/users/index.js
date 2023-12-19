@@ -16,6 +16,7 @@ const createUserRouter = ({ userModel, userSessionCollection, }) => {
     y asi no se pierde el contexto "this"
     */
     usersRouter.get("/", [validateToken.validateToken, (0, isAdmin_1.isAdmin)([enum_1.Roles.ADMIN])], usersController.getAll);
+    usersRouter.patch("/like", [validateToken.validateToken, (0, isAdmin_1.isAdmin)([enum_1.Roles.ADMIN, enum_1.Roles.USER])], usersController.likeMovie);
     return usersRouter;
 };
 exports.createUserRouter = createUserRouter;

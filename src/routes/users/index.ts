@@ -25,5 +25,11 @@ export const createUserRouter = ({
       usersController.getAll
    );
 
+   usersRouter.patch(
+      "/like",
+      [validateToken.validateToken, isAdmin([Roles.ADMIN, Roles.USER])],
+      usersController.likeMovie
+   );
+
    return usersRouter;
 };

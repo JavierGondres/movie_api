@@ -28,6 +28,21 @@ class UsersController {
                 return res.status(501).json({ MessageError: e });
             }
         });
+        this.likeMovie = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { _id } = req.body;
+            console.log(_id);
+            try {
+                const result = yield this.userModel.likeMovie({ _id });
+                if (result.error) {
+                    return res.status(400).json(result);
+                }
+                return res.status(200).json(result);
+            }
+            catch (e) {
+                console.log(e);
+                return res.status(501).json({ MessageError: "Error en likes" });
+            }
+        });
         this.userModel = userModel;
     }
 }

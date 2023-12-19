@@ -20,7 +20,7 @@ export class MovieModel {
       salePrice,
       stock,
       title,
-      penalty
+      penalty,
    }: Movies) {
       let message;
       const existMovie: WithId<Document> | null = await this.findMovieByTitle({
@@ -89,7 +89,8 @@ export class MovieModel {
          }
 
          try {
-            const { title, rentalPrice, salePrice, lastModifiedDate, _id } = movieObj;
+            const { title, rentalPrice, salePrice, lastModifiedDate, _id } =
+               movieObj;
             if (title || rentalPrice || salePrice) {
                const movieLog: Partial<Movies & { movieId?: ObjectId }> = {
                   movieId: new ObjectId(_id as unknown as ObjectId),
@@ -134,9 +135,13 @@ export class MovieModel {
       return existMovie;
    }
 
-   async validateMovieExistence(
-      movieId: ObjectId
-   ): Promise<Movies | null> {
+   async findMovie(obj: object) {
+      const existMovie = await this.movieCollection.findOne(obj);
+
+      return existMovie;
+   }
+
+   async validateMovieExistence(movieId: ObjectId): Promise<Movies | null> {
       try {
          const movie = (await this.movieCollection.findOne({
             _id: new ObjectId(movieId),
@@ -176,7 +181,10 @@ export class MovieModel {
             stock: movie.stock - (quantity ?? 0),
          };
 
-         const result = await this.updateMovie(movie._id as unknown as Pick<Movies, "_id">, newStock);
+         const result = await this.updateMovie(
+            movie._id as unknown as Pick<Movies, "_id">,
+            newStock
+         );
 
          if (result.error) {
             return "Error updating stock";
@@ -186,6 +194,41 @@ export class MovieModel {
       } catch (error) {
          console.log(error);
          return "Error updating stock";
+      }
+   }
+
+   async likeMovie(_id: ObjectId) {
+      let message;
+      try {
+         const like = await this.movieCollection.updateOne(
+            { _id: new ObjectId(_id) },
+            {
+               $inc: { likes: 1 },
+            }
+         );
+
+         console.log("model", _id);
+
+         if (like.modifiedCount === 0) {
+            message = "Couldnt update or not found";
+            return {
+               error: true,
+               message: message,
+            };
+         }
+
+         message = "Liked";
+         return {
+            error: false,
+            message: message,
+         };
+      } catch (error) {
+         console.log(error);
+         message = "Error en likes";
+         return {
+            error: true,
+            message: message,
+         };
       }
    }
 }

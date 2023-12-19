@@ -28,7 +28,7 @@ const rentalsCollection = MongoSingleton.getClient()
    .collection(DBCollections.RENTALS);
 
 createApp({
-   userModel: new UserModel(userCollection),
+   userModel: new UserModel(userCollection, new MovieModel(movieCollection, moviesLogsCollection)),
    authModel: new AuthModel(userCollection, userSessionCollection),
    movieModel: new MovieModel(movieCollection, moviesLogsCollection),
    rentalModel: new RentalModel(

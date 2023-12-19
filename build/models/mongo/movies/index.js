@@ -16,7 +16,7 @@ class MovieModel {
         this.movieCollection = movieCollection;
         this.moviesLogsCollection = moviesLogsCollection;
     }
-    createMovie({ availability, description, imageURL, lastModifiedDate, rentalPrice, salePrice, stock, title, penalty }) {
+    createMovie({ availability, description, imageURL, lastModifiedDate, rentalPrice, salePrice, stock, title, penalty, }) {
         return __awaiter(this, void 0, void 0, function* () {
             let message;
             const existMovie = yield this.findMovieByTitle({
@@ -112,6 +112,12 @@ class MovieModel {
             return existMovie;
         });
     }
+    findMovie(obj) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const existMovie = yield this.movieCollection.findOne(obj);
+            return existMovie;
+        });
+    }
     validateMovieExistence(movieId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -158,6 +164,37 @@ class MovieModel {
             catch (error) {
                 console.log(error);
                 return "Error updating stock";
+            }
+        });
+    }
+    likeMovie(_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let message;
+            try {
+                const like = yield this.movieCollection.updateOne({ _id: new mongodb_1.ObjectId(_id) }, {
+                    $inc: { likes: 1 },
+                });
+                console.log("model", _id);
+                if (like.modifiedCount === 0) {
+                    message = "Couldnt update or not found";
+                    return {
+                        error: true,
+                        message: message,
+                    };
+                }
+                message = "Liked";
+                return {
+                    error: false,
+                    message: message,
+                };
+            }
+            catch (error) {
+                console.log(error);
+                message = "Error en likes";
+                return {
+                    error: true,
+                    message: message,
+                };
             }
         });
     }
