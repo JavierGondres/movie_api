@@ -6,7 +6,7 @@ import { isAdmin } from "../../middleware/isAdmin";
 import { Database } from "../../types/database";
 import { Roles } from "../../types/enum";
 import { validateData } from "../../middleware/validateData";
-import { purchaseSchema } from "../../models/mongo/users/schema";
+import { purchaseSchema, rentalSchema } from "../../models/mongo/users/schema";
 
 export const createUserRouter = ({
    userModel,
@@ -14,7 +14,6 @@ export const createUserRouter = ({
 }: Pick<Database, "userModel" | "userSessionCollection">) => {
    const usersRouter = Router();
    const usersController = new UsersController({ userModel });
-
    const validateToken = new ValidateToken(userSessionCollection as any);
 
    /*
@@ -35,6 +34,15 @@ export const createUserRouter = ({
          isAdmin([Roles.USER, Roles.ADMIN]),
       ],
       usersController.purchase
+   );
+   usersRouter.post(
+      "/rental",
+      [
+         validateData(rentalSchema),
+         validateToken.validateToken,
+         isAdmin([Roles.USER, Roles.ADMIN]),
+      ],
+      usersController.rental
    );
 
    return usersRouter;

@@ -23,6 +23,11 @@ const createUserRouter = ({ userModel, userSessionCollection, }) => {
         validateToken.validateToken,
         (0, isAdmin_1.isAdmin)([enum_1.Roles.USER, enum_1.Roles.ADMIN]),
     ], usersController.purchase);
+    usersRouter.post("/rental", [
+        (0, validateData_1.validateData)(schema_1.rentalSchema),
+        validateToken.validateToken,
+        (0, isAdmin_1.isAdmin)([enum_1.Roles.USER, enum_1.Roles.ADMIN]),
+    ], usersController.rental);
     return usersRouter;
 };
 exports.createUserRouter = createUserRouter;

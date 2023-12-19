@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersController = void 0;
+const enum_1 = require("../../types/enum");
 class UsersController {
     constructor({ userModel }) {
         this.getAll = (_req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -41,6 +42,32 @@ class UsersController {
                     userName,
                     quantity,
                     salePrice,
+                });
+                if (result.error)
+                    return res.status(400).json(result);
+                return res.status(200).json(result.message);
+            }
+            catch (e) {
+                console.log(e);
+                return res.status(501).json(result);
+            }
+        });
+        this.rental = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            let { _id, movieId, userName, quantity, rentalPrice, penalty } = req.body;
+            let result = {
+                error: false,
+                message: "Something went wrong",
+            };
+            if (req.decodedUserRole !== enum_1.Roles.ADMIN)
+                penalty = undefined;
+            try {
+                result = yield this.userModel.rental({
+                    _id,
+                    movieId,
+                    userName,
+                    quantity,
+                    rentalPrice,
+                    penalty,
                 });
                 if (result.error)
                     return res.status(400).json(result);
