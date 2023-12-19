@@ -2,9 +2,13 @@ import { Router } from "express";
 import { validateData } from "../../middleware/validateData";
 import { ValidateToken } from "../../middleware/verifyJWT";
 import { MovieController } from "../../controllers/movies";
-import { movieSchema, updateMovieSchema } from "../../models/mongo/movies/schema";
+import {
+   movieSchema,
+   updateMovieSchema,
+} from "../../models/mongo/movies/schema";
 import { isAdmin } from "../../middleware/isAdmin";
 import { Database } from "../../types/database";
+import { Roles } from "../../types/enum";
 // import { CheckIsValid } from "../../middleware/checkIsValid";
 
 export const createMovieRouter = ({
@@ -12,7 +16,7 @@ export const createMovieRouter = ({
    userSessionCollection,
 }: Pick<
    Database,
-   "movieModel" | "userCollection" | "userSessionCollection"
+   "movieModel" | "userSessionCollection"
 >) => {
    const movieRouter = Router();
    const movieController = new MovieController({ movieModel });
@@ -20,14 +24,18 @@ export const createMovieRouter = ({
 
    movieRouter.post(
       "/",
-      [validateData(movieSchema), validateToken.validateToken, isAdmin],
+      [
+         validateData(movieSchema),
+         validateToken.validateToken,
+         isAdmin([Roles.ADMIN]),
+      ],
       movieController.createMovie
    );
    movieRouter.put(
       "/",
       validateData(updateMovieSchema),
       validateToken.validateToken,
-      isAdmin,
+      isAdmin([Roles.ADMIN]),
       movieController.updateMovie
    );
 

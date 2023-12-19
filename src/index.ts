@@ -8,7 +8,6 @@ export const createApp = async ({
    userModel,
    authModel,
    movieModel,
-   userCollection,
    userSessionCollection
 }: Database) => {
    const app = express();
@@ -17,17 +16,16 @@ export const createApp = async ({
 
    app.use(
       "/users",
-      createUserRouter({ userModel: userModel, userCollection: userCollection })
+      createUserRouter({ userModel: userModel, userSessionCollection: userSessionCollection })
    );
    app.use(
       "/auth",
-      createAuthRouter({ authModel: authModel, userCollection: userCollection, userSessionCollection: userSessionCollection })
+      createAuthRouter({ authModel: authModel, userSessionCollection: userSessionCollection })
    );
    app.use(
       "/movies",
       createMovieRouter({
          movieModel: movieModel,
-         userCollection: userCollection,
          userSessionCollection: userSessionCollection
       })
    );

@@ -5,6 +5,7 @@ const express_1 = require("express");
 const users_1 = require("../../controllers/users");
 const verifyJWT_1 = require("../../middleware/verifyJWT");
 const isAdmin_1 = require("../../middleware/isAdmin");
+const enum_1 = require("../../types/enum");
 const createUserRouter = ({ userModel, userSessionCollection }) => {
     const usersRouter = (0, express_1.Router)();
     const usersController = new users_1.UsersController({ userModel });
@@ -14,8 +15,8 @@ const createUserRouter = ({ userModel, userSessionCollection }) => {
     se debe convertir a funcion flecha o usar bind, por ejemplo instanciaDeMiClase.miMetodo.bind(instanciaDeMiClase)
     y asi no se pierde el contexto "this"
     */
-    usersRouter.get("/", [validateToken.validateToken, isAdmin_1.isAdmin], usersController.getAll);
-    usersRouter.post("/purchase", usersController.purchase);
+    usersRouter.get("/", [validateToken.validateToken, (0, isAdmin_1.isAdmin)([enum_1.Roles.ADMIN])], usersController.getAll);
+    usersRouter.post("/purchase", [validateToken.validateToken, (0, isAdmin_1.isAdmin)([enum_1.Roles.USER, enum_1.Roles.ADMIN])], usersController.purchase);
     return usersRouter;
 };
 exports.createUserRouter = createUserRouter;
