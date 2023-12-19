@@ -10,11 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RentalController = void 0;
-const enum_1 = require("../../types/enum");
 class RentalController {
     constructor({ rentalModel }) {
         this.rental = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            let { movieId, userName, quantity, rentalPrice, penalty } = req.body;
+            let { movieId, quantity } = req.body;
             const _id = req._id;
             if (!_id) {
                 return res.status(500).json({
@@ -26,16 +25,11 @@ class RentalController {
                 error: false,
                 message: "Something went wrong",
             };
-            if (req.decodedUserRole !== enum_1.Roles.ADMIN)
-                penalty = undefined;
             try {
                 result = yield this.rentalModel.rental({
                     _id,
                     movieId,
-                    userName,
-                    quantity,
-                    rentalPrice,
-                    penalty,
+                    quantity
                 });
                 if (result.error)
                     return res.status(400).json(result);

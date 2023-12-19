@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { Roles } from "../../types/enum";
 export class RentalController {
    rentalModel: any;
 
@@ -8,7 +7,7 @@ export class RentalController {
    }
 
    rental = async (req: Request, res: Response) => {
-      let { movieId, userName, quantity, rentalPrice, penalty } = req.body;
+      let { movieId, quantity } = req.body;
       const _id = req._id
       
       if(!_id){
@@ -26,16 +25,11 @@ export class RentalController {
          message: "Something went wrong",
       };
 
-      if (req.decodedUserRole !== Roles.ADMIN) penalty = undefined;
-
       try {
          result = await this.rentalModel.rental({
             _id,
             movieId,
-            userName,
-            quantity,
-            rentalPrice,
-            penalty,
+            quantity
          });
 
          if (result.error) return res.status(400).json(result);

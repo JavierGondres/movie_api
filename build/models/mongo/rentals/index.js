@@ -17,20 +17,21 @@ class RentalModel {
         this.movieModel = movieModel;
     }
     insertRental(rentalDetails, movie) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { _id, userName, quantity, movieId, rentalPrice } = rentalDetails;
+                const { _id, quantity, movieId } = rentalDetails;
                 const dayToReturnMovie = new Date();
                 dayToReturnMovie.setDate(dayToReturnMovie.getDate() + 20);
                 const rentalObj = {
                     userId: new mongodb_1.ObjectId(_id),
                     movieId: new mongodb_1.ObjectId(movieId),
-                    userName: userName,
                     quantity: quantity,
                     rentalDate: new Date(),
-                    rentalPrice: rentalPrice,
+                    rentalPrice: movie === null || movie === void 0 ? void 0 : movie.rentalPrice,
                     dayToReturnMovie: dayToReturnMovie,
                     penalty: movie === null || movie === void 0 ? void 0 : movie.penalty,
+                    totalAmount: ((_a = movie === null || movie === void 0 ? void 0 : movie.rentalPrice) !== null && _a !== void 0 ? _a : 0) * (quantity !== null && quantity !== void 0 ? quantity : 0),
                 };
                 yield this.rentalsCollection.insertOne(rentalObj);
                 return null; // No hay error

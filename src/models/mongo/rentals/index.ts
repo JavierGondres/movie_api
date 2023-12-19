@@ -1,11 +1,5 @@
 import { Collection, Document, ObjectId } from "mongodb";
-import { Movies, Purchases, Users } from "../types";
-
-export interface RentalPurchaseDetails
-   extends Partial<Users & Purchases & Movies> {
-   movieId: ObjectId;
-   penalty: number;
-}
+import { Movies, RentalPurchaseDetails, Rentals } from "../types";
 
 export class RentalModel {
    private rentalsCollection: Collection<Document>;
@@ -21,21 +15,20 @@ export class RentalModel {
       movie: Movies | null
    ): Promise<string | null> {
       try {
-         const { _id, userName, quantity, movieId, rentalPrice } =
-            rentalDetails;
+         const { _id, quantity, movieId } = rentalDetails;
 
          const dayToReturnMovie = new Date();
          dayToReturnMovie.setDate(dayToReturnMovie.getDate() + 20);
 
-         const rentalObj = {
+         const rentalObj: Partial<Rentals> = {
             userId: new ObjectId(_id),
             movieId: new ObjectId(movieId),
-            userName: userName,
             quantity: quantity,
             rentalDate: new Date(),
-            rentalPrice: rentalPrice,
+            rentalPrice: movie?.rentalPrice,
             dayToReturnMovie: dayToReturnMovie,
             penalty: movie?.penalty,
+            totalAmount: (movie?.rentalPrice ?? 0) * (quantity ?? 0),
          };
 
          await this.rentalsCollection.insertOne(rentalObj);
@@ -61,7 +54,10 @@ export class RentalModel {
          return { error: true, message: stockValidationMessage };
       }
 
-      const rentalInsertionMessage = await this.insertRental(rentalDetails, movie);
+      const rentalInsertionMessage = await this.insertRental(
+         rentalDetails,
+         movie
+      );
 
       if (rentalInsertionMessage) {
          return { error: true, message: rentalInsertionMessage };

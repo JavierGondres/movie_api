@@ -34,10 +34,27 @@ export interface Movies {
 
 
 export interface Purchases {
+   _id: ObjectId;
+
+   movieId: ObjectId;
    quantity: number;
    purchasedDate: Date;
    salePrice: number;
+   totalAmount: number
 }
+
+export interface Rentals {
+   _id: ObjectId;
+   userId: ObjectId;
+   movieId: ObjectId;
+   quantity: number;
+   rentalDate: Date;
+   rentalPrice: number;
+   dayToReturnMovie: Date;
+   penalty: number;
+   totalAmount: number
+}
+
 
 export interface RentalPurchaseDetails
    extends Partial<Users & Purchases & Movies> {
