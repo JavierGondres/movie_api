@@ -20,6 +20,7 @@ export class MovieModel {
       salePrice,
       stock,
       title,
+      penalty
    }: Movies) {
       let message;
       const existMovie: WithId<Document> | null = await this.findMovieByTitle({
@@ -44,6 +45,7 @@ export class MovieModel {
             salePrice: salePrice,
             stock: stock,
             title: title,
+            penalty: penalty,
             likes: 0,
             updatesLog: [],
          };

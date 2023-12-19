@@ -31,6 +31,11 @@ export const movieSchema = [
       .withMessage("Invalid stock")
       .notEmpty()
       .withMessage("stock is required"),
+   body("penalty")
+      .isNumeric()
+      .withMessage("Invalid penalty")
+      .notEmpty()
+      .withMessage("penalty is required"),
    body("title")
       .isAlphanumeric()
       .withMessage("Invalid title")

@@ -33,6 +33,11 @@ exports.movieSchema = [
         .withMessage("Invalid stock")
         .notEmpty()
         .withMessage("stock is required"),
+    (0, express_validator_1.body)("penalty")
+        .isNumeric()
+        .withMessage("Invalid penalty")
+        .notEmpty()
+        .withMessage("penalty is required"),
     (0, express_validator_1.body)("title")
         .isAlphanumeric()
         .withMessage("Invalid title")

@@ -14,7 +14,7 @@ const enum_1 = require("../../types/enum");
 class MovieController {
     constructor({ movieModel }) {
         this.createMovie = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { availability, description, imageURL, rentalPrice, salePrice, stock, title, } = req.body;
+            const { availability, description, imageURL, rentalPrice, salePrice, stock, title, penalty } = req.body;
             let result = {
                 error: false,
                 message: "Something went wrong",
@@ -29,6 +29,7 @@ class MovieController {
                     salePrice,
                     stock,
                     title,
+                    penalty
                 });
                 if (result.error)
                     return res.status(400).json(result);

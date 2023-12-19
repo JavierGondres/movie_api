@@ -27,6 +27,7 @@ export interface Movies {
    salePrice: number;
    availability: boolean;
    lastModifiedDate: Date;
+   penalty: number;
    likes: number;
    updatesLog: Array<Logs>;
 }

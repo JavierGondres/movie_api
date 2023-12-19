@@ -16,7 +16,7 @@ class MovieModel {
         this.movieCollection = movieCollection;
         this.moviesLogsCollection = moviesLogsCollection;
     }
-    createMovie({ availability, description, imageURL, lastModifiedDate, rentalPrice, salePrice, stock, title, }) {
+    createMovie({ availability, description, imageURL, lastModifiedDate, rentalPrice, salePrice, stock, title, penalty }) {
         return __awaiter(this, void 0, void 0, function* () {
             let message;
             const existMovie = yield this.findMovieByTitle({
@@ -39,6 +39,7 @@ class MovieModel {
                     salePrice: salePrice,
                     stock: stock,
                     title: title,
+                    penalty: penalty,
                     likes: 0,
                     updatesLog: [],
                 };

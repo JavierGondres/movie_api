@@ -18,6 +18,7 @@ export class MovieController {
          salePrice,
          stock,
          title,
+         penalty
       } = req.body;
 
       let result: {
@@ -38,6 +39,7 @@ export class MovieController {
             salePrice,
             stock,
             title,
+            penalty
          });
 
          if (result.error) return res.status(400).json(result);
