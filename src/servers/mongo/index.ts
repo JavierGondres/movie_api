@@ -28,17 +28,17 @@ const rentalsCollection = MongoSingleton.getClient()
    .collection(DBCollections.RENTALS);
 
 createApp({
-   userModel: new UserModel(
-      userCollection,
-      movieCollection,
-      purchasesCollection,
+   userModel: new UserModel(userCollection),
+   authModel: new AuthModel(userCollection, userSessionCollection),
+   movieModel: new MovieModel(movieCollection, moviesLogsCollection),
+   rentalModel: new RentalModel(
       rentalsCollection,
       new MovieModel(movieCollection, moviesLogsCollection)
    ),
-   authModel: new AuthModel(userCollection, userSessionCollection),
-   movieModel: new MovieModel(movieCollection, moviesLogsCollection),
-   rentalModel: new RentalModel(rentalsCollection, new MovieModel(movieCollection, moviesLogsCollection)),
-   purchaseModel: new PurchaseModel(purchasesCollection, new MovieModel(movieCollection, moviesLogsCollection)),
+   purchaseModel: new PurchaseModel(
+      purchasesCollection,
+      new MovieModel(movieCollection, moviesLogsCollection)
+   ),
    userCollection: userCollection as unknown as Collection<Document>,
    movieCollection: movieCollection as unknown as Collection<Document>,
    userSessionCollection:

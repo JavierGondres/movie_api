@@ -5,8 +5,6 @@ import { ValidateToken } from "../../middleware/verifyJWT";
 import { isAdmin } from "../../middleware/isAdmin";
 import { Database } from "../../types/database";
 import { Roles } from "../../types/enum";
-import { validateData } from "../../middleware/validateData";
-import { purchaseSchema, rentalSchema } from "../../models/mongo/users/schema";
 
 export const createUserRouter = ({
    userModel,
@@ -25,24 +23,6 @@ export const createUserRouter = ({
       "/",
       [validateToken.validateToken, isAdmin([Roles.ADMIN])],
       usersController.getAll
-   );
-   usersRouter.post(
-      "/purchase",
-      [
-         validateData(purchaseSchema),
-         validateToken.validateToken,
-         isAdmin([Roles.USER, Roles.ADMIN]),
-      ],
-      usersController.purchase
-   );
-   usersRouter.post(
-      "/rental",
-      [
-         validateData(rentalSchema),
-         validateToken.validateToken,
-         isAdmin([Roles.USER, Roles.ADMIN]),
-      ],
-      usersController.rental
    );
 
    return usersRouter;

@@ -27,7 +27,7 @@ const rentalsCollection = MongoSingleton_1.MongoSingleton.getClient()
     .db(enum_1.DB.movie_api)
     .collection(enum_1.DBCollections.RENTALS);
 (0, __1.createApp)({
-    userModel: new users_1.UserModel(userCollection, movieCollection, purchasesCollection, rentalsCollection, new movies_1.MovieModel(movieCollection, moviesLogsCollection)),
+    userModel: new users_1.UserModel(userCollection),
     authModel: new auth_1.AuthModel(userCollection, userSessionCollection),
     movieModel: new movies_1.MovieModel(movieCollection, moviesLogsCollection),
     rentalModel: new rentals_1.RentalModel(rentalsCollection, new movies_1.MovieModel(movieCollection, moviesLogsCollection)),
