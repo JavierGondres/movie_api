@@ -89,7 +89,7 @@ export class MovieModel {
          }
 
          try {
-            const { title, rentalPrice, salePrice, lastModifiedDate, _id } =
+            const { title, rentalPrice, salePrice, lastModifiedDate} =
                movieObj;
             if (title || rentalPrice || salePrice) {
                const movieLog: Partial<Movies & { movieId?: ObjectId }> = {
@@ -100,7 +100,20 @@ export class MovieModel {
                   lastModifiedDate: lastModifiedDate || new Date(),
                };
 
+               //debo separar la logica aqui y modularizar mas
                await this.moviesLogsCollection.insertOne(movieLog);
+               const latestMovieLogs = await this.moviesLogsCollection
+               .find({movieId: new ObjectId(_id as unknown as ObjectId)})
+               .sort({ lastModifiedDate: -1 }) 
+               .limit(5)
+               .toArray();
+
+               console.log(latestMovieLogs);
+
+               await this.movieCollection.updateOne(
+                  { _id: new ObjectId(_id as unknown as ObjectId) },
+                  { $set: { updatesLog: latestMovieLogs } }
+               );
             }
          } catch (error) {
             console.log(error);
@@ -137,7 +150,9 @@ export class MovieModel {
    ) {
       try {
          let query: Record<string, any> = {};
-         let sort: Record<string, any> = { title: sortOrder === "desc" ? -1 : 1 };
+         let sort: Record<string, any> = {
+            title: sortOrder === "desc" ? -1 : 1,
+         };
 
          if (filterByAvailability === "available") {
             query.availability = true;
@@ -159,20 +174,21 @@ export class MovieModel {
 
          const skip = (page - 1) * perPage;
 
-
-         console.log("Query",query)
-         console.log("Sort",sort)
+         console.log("Query", query);
+         console.log("Sort", sort);
 
          // Obtener resultados
-         const movies = await this.movieCollection.find(query)
+         const movies = await this.movieCollection
+            .find(query)
             .sort(sort)
             .skip(skip)
-            .limit(perPage).toArray();
+            .limit(perPage)
+            .toArray();
 
          return movies;
       } catch (error) {
-         console.log(error)
-         return null
+         console.log(error);
+         return null;
       }
    }
 

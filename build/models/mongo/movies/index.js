@@ -74,10 +74,18 @@ class MovieModel {
                     };
                 }
                 try {
-                    const { title, rentalPrice, salePrice, lastModifiedDate, _id } = movieObj;
+                    const { title, rentalPrice, salePrice, lastModifiedDate } = movieObj;
                     if (title || rentalPrice || salePrice) {
                         const movieLog = Object.assign(Object.assign(Object.assign(Object.assign({ movieId: new mongodb_1.ObjectId(_id) }, (title && { title })), (rentalPrice && { rentalPrice })), (salePrice && { salePrice })), { lastModifiedDate: lastModifiedDate || new Date() });
+                        //debo separar la logica aqui y modularizar mas
                         yield this.moviesLogsCollection.insertOne(movieLog);
+                        const latestMovieLogs = yield this.moviesLogsCollection
+                            .find({ movieId: new mongodb_1.ObjectId(_id) })
+                            .sort({ lastModifiedDate: -1 })
+                            .limit(5)
+                            .toArray();
+                        console.log(latestMovieLogs);
+                        yield this.movieCollection.updateOne({ _id: new mongodb_1.ObjectId(_id) }, { $set: { updatesLog: latestMovieLogs } });
                     }
                 }
                 catch (error) {
@@ -108,7 +116,9 @@ class MovieModel {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let query = {};
-                let sort = { title: sortOrder === "desc" ? -1 : 1 };
+                let sort = {
+                    title: sortOrder === "desc" ? -1 : 1,
+                };
                 if (filterByAvailability === "available") {
                     query.availability = true;
                 }
@@ -130,10 +140,12 @@ class MovieModel {
                 console.log("Query", query);
                 console.log("Sort", sort);
                 // Obtener resultados
-                const movies = yield this.movieCollection.find(query)
+                const movies = yield this.movieCollection
+                    .find(query)
                     .sort(sort)
                     .skip(skip)
-                    .limit(perPage).toArray();
+                    .limit(perPage)
+                    .toArray();
                 return movies;
             }
             catch (error) {
