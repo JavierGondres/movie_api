@@ -87,16 +87,18 @@ export class MovieModel {
          }
 
          try {
-            const { title, rentalPrice, salePrice, _id } = movieObj;
-            const movieLog: Partial<Movies & { movieId?: ObjectId }> = {
-               movieId: new ObjectId(_id as unknown as ObjectId),
-               ...(title && { title }),
-               ...(rentalPrice && { rentalPrice }),
-               ...(salePrice && { salePrice }),
-               lastModifiedDate: movieObj.lastModifiedDate,
-            };
+            const { title, rentalPrice, salePrice, lastModifiedDate, _id } = movieObj;
+            if (title || rentalPrice || salePrice) {
+               const movieLog: Partial<Movies & { movieId?: ObjectId }> = {
+                  movieId: new ObjectId(_id as unknown as ObjectId),
+                  ...(title && { title }),
+                  ...(rentalPrice && { rentalPrice }),
+                  ...(salePrice && { salePrice }),
+                  lastModifiedDate: lastModifiedDate || new Date(),
+               };
 
-            await this.moviesLogsCollection.insertOne(movieLog);
+               await this.moviesLogsCollection.insertOne(movieLog);
+            }
          } catch (error) {
             console.log(error);
             message = "Something went wrong creating movieLog";

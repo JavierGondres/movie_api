@@ -73,9 +73,11 @@ class MovieModel {
                     };
                 }
                 try {
-                    const { title, rentalPrice, salePrice, _id } = movieObj;
-                    const movieLog = Object.assign(Object.assign(Object.assign(Object.assign({ movieId: new mongodb_1.ObjectId(_id) }, (title && { title })), (rentalPrice && { rentalPrice })), (salePrice && { salePrice })), { lastModifiedDate: movieObj.lastModifiedDate });
-                    yield this.moviesLogsCollection.insertOne(movieLog);
+                    const { title, rentalPrice, salePrice, lastModifiedDate, _id } = movieObj;
+                    if (title || rentalPrice || salePrice) {
+                        const movieLog = Object.assign(Object.assign(Object.assign(Object.assign({ movieId: new mongodb_1.ObjectId(_id) }, (title && { title })), (rentalPrice && { rentalPrice })), (salePrice && { salePrice })), { lastModifiedDate: lastModifiedDate || new Date() });
+                        yield this.moviesLogsCollection.insertOne(movieLog);
+                    }
                 }
                 catch (error) {
                     console.log(error);
