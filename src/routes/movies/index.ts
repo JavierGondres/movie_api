@@ -14,10 +14,7 @@ import { Roles } from "../../types/enum";
 export const createMovieRouter = ({
    movieModel,
    userSessionCollection,
-}: Pick<
-   Database,
-   "movieModel" | "userSessionCollection"
->) => {
+}: Pick<Database, "movieModel" | "userSessionCollection">) => {
    const movieRouter = Router();
    const movieController = new MovieController({ movieModel });
    const validateToken = new ValidateToken(userSessionCollection as any);
@@ -37,6 +34,12 @@ export const createMovieRouter = ({
       validateToken.validateToken,
       isAdmin([Roles.ADMIN]),
       movieController.updateMovie
+   );
+
+   movieRouter.get(
+      "/",
+      validateToken.validateToken,
+      movieController.getAll
    );
 
    return movieRouter;

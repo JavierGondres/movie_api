@@ -127,6 +127,55 @@ export class MovieModel {
       }
    }
 
+   async getAll(
+      filterByAvailability?: string,
+      sortBy?: "title" | "popularity",
+      title?: string,
+      page?: number,
+      perPage?: number,
+      sortOrder?: "asc" | "desc"
+   ) {
+      try {
+         let query: Record<string, any> = {};
+         let sort: Record<string, any> = { title: sortOrder === "desc" ? -1 : 1 };
+
+         if (filterByAvailability === "available") {
+            query.availability = true;
+         } else if (filterByAvailability === "unavailable") {
+            query.availability = false;
+         }
+
+         // Ordenar por título por defecto
+         if (sortBy === "popularity") {
+            sort = { likes: sortOrder === "desc" ? -1 : 1 }; // Ordenar por popularidad (likes)
+         }
+
+         if (title) {
+            query.title = { $regex: title, $options: "i" };
+         }
+
+         if (!perPage) perPage = 10;
+         if (!page) page = 1;
+
+         const skip = (page - 1) * perPage;
+
+
+         console.log("Query",query)
+         console.log("Sort",sort)
+
+         // Obtener resultados
+         const movies = await this.movieCollection.find(query)
+            .sort(sort)
+            .skip(skip)
+            .limit(perPage).toArray();
+
+         return movies;
+      } catch (error) {
+         console.log(error)
+         return null
+      }
+   }
+
    async findMovieByTitle({ title }: { title: string }) {
       const existMovie = await this.movieCollection.findOne({
          title: title,

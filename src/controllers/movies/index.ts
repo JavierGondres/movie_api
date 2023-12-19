@@ -18,7 +18,7 @@ export class MovieController {
          salePrice,
          stock,
          title,
-         penalty
+         penalty,
       } = req.body;
 
       let result: {
@@ -39,7 +39,7 @@ export class MovieController {
             salePrice,
             stock,
             title,
-            penalty
+            penalty,
          });
 
          if (result.error) return res.status(400).json(result);
@@ -102,6 +102,43 @@ export class MovieController {
       } catch (e) {
          console.log(e);
          return res.status(501).json(result);
+      }
+   };
+
+   getAll = async (req: Request, res: Response) => {
+      let message;
+      try {
+         let { filterByAvailability, sortBy, title, page, perPage, sortOrder } = req.query;
+
+         if (req.decodedUserRole === Roles.USER || !req.decodedUserRole)
+            filterByAvailability = "available";
+
+         console.log(perPage)
+
+         const movies = await this.movieModel.getAll(
+            filterByAvailability,
+            sortBy,
+            title,
+            Number(page),
+            Number(perPage),
+            sortOrder
+         );
+
+         if (!movies) {
+            message = "Error al obtener peliculas";
+            return res.status(500).json({
+               error: true,
+               message: message,
+            });
+         }
+         return res.status(200).json(movies);
+      } catch (error) {
+         console.log(error);
+         message = "Error grave obtener peliculas";
+         return res.status(500).json({
+            error: true,
+            message: message,
+         });
       }
    };
 }

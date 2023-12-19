@@ -14,7 +14,7 @@ const enum_1 = require("../../types/enum");
 class MovieController {
     constructor({ movieModel }) {
         this.createMovie = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { availability, description, imageURL, rentalPrice, salePrice, stock, title, penalty } = req.body;
+            const { availability, description, imageURL, rentalPrice, salePrice, stock, title, penalty, } = req.body;
             let result = {
                 error: false,
                 message: "Something went wrong",
@@ -29,7 +29,7 @@ class MovieController {
                     salePrice,
                     stock,
                     title,
-                    penalty
+                    penalty,
                 });
                 if (result.error)
                     return res.status(400).json(result);
@@ -73,6 +73,32 @@ class MovieController {
             catch (e) {
                 console.log(e);
                 return res.status(501).json(result);
+            }
+        });
+        this.getAll = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            let message;
+            try {
+                let { filterByAvailability, sortBy, title, page, perPage, sortOrder } = req.query;
+                if (req.decodedUserRole === enum_1.Roles.USER || !req.decodedUserRole)
+                    filterByAvailability = "available";
+                console.log(perPage);
+                const movies = yield this.movieModel.getAll(filterByAvailability, sortBy, title, Number(page), Number(perPage), sortOrder);
+                if (!movies) {
+                    message = "Error al obtener peliculas";
+                    return res.status(500).json({
+                        error: true,
+                        message: message,
+                    });
+                }
+                return res.status(200).json(movies);
+            }
+            catch (error) {
+                console.log(error);
+                message = "Error grave obtener peliculas";
+                return res.status(500).json({
+                    error: true,
+                    message: message,
+                });
             }
         });
         this.movieModel = movieModel;

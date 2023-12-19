@@ -104,6 +104,44 @@ class MovieModel {
             }
         });
     }
+    getAll(filterByAvailability, sortBy, title, page, perPage, sortOrder) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let query = {};
+                let sort = { title: sortOrder === "desc" ? -1 : 1 };
+                if (filterByAvailability === "available") {
+                    query.availability = true;
+                }
+                else if (filterByAvailability === "unavailable") {
+                    query.availability = false;
+                }
+                // Ordenar por título por defecto
+                if (sortBy === "popularity") {
+                    sort = { likes: sortOrder === "desc" ? -1 : 1 }; // Ordenar por popularidad (likes)
+                }
+                if (title) {
+                    query.title = { $regex: title, $options: "i" };
+                }
+                if (!perPage)
+                    perPage = 10;
+                if (!page)
+                    page = 1;
+                const skip = (page - 1) * perPage;
+                console.log("Query", query);
+                console.log("Sort", sort);
+                // Obtener resultados
+                const movies = yield this.movieCollection.find(query)
+                    .sort(sort)
+                    .skip(skip)
+                    .limit(perPage).toArray();
+                return movies;
+            }
+            catch (error) {
+                console.log(error);
+                return null;
+            }
+        });
+    }
     findMovieByTitle({ title }) {
         return __awaiter(this, void 0, void 0, function* () {
             const existMovie = yield this.movieCollection.findOne({
