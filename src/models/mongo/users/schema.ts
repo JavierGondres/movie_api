@@ -6,11 +6,6 @@ export const purchaseSchema = [
       .withMessage("userName is required")
       .isString()
       .withMessage("User most be a string"),
-   body("_id")
-      .notEmpty()
-      .withMessage("_id is required")
-      .isMongoId()
-      .withMessage("invalid _id"),
    body("movieId")
       .notEmpty()
       .withMessage("movieId is required")
@@ -34,11 +29,6 @@ export const rentalSchema = [
       .withMessage("userName is required")
       .isString()
       .withMessage("User most be a string"),
-   body("_id")
-      .notEmpty()
-      .withMessage("_id is required")
-      .isMongoId()
-      .withMessage("invalid _id"),
    body("movieId")
       .notEmpty()
       .withMessage("movieId is required")

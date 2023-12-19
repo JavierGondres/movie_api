@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthModel = void 0;
+const mongodb_1 = require("mongodb");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const generateJWT_1 = require("../../../middleware/generateJWT");
@@ -86,6 +87,7 @@ class AuthModel {
                 }
                 const { error, userAccesToken } = yield (0, generateJWT_1.generateJWT)({
                     userRole: user.userRole,
+                    _id: new mongodb_1.ObjectId(user._id)
                 });
                 if (error) {
                     message =
@@ -102,10 +104,6 @@ class AuthModel {
                         // isValid: true,
                     };
                     yield this.userSessionsCollection.insertOne(accesToken);
-                    // await this.userSessionsCollection.updateOne(
-                    //    { _id: new ObjectId(user._id) },
-                    //    { $push: { userSessions: [accesToken] } }
-                    // );
                 }
                 catch (error) {
                     console.log(error);

@@ -7,7 +7,17 @@ export class PurchasesController {
    }
 
    purchase = async (req: Request, res: Response) => {
-      const { _id, movieId, userName, quantity, salePrice } = req.body;
+      const { movieId, userName, quantity, salePrice } = req.body;
+
+      const _id = req._id;
+
+      if (!_id) {
+         return res.status(500).json({
+            error: true,
+            message: "Error user id in rental",
+         });
+      }
+
       let result: {
          error: boolean;
          message: string;

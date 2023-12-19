@@ -8,6 +8,7 @@ declare module "express" {
       decodedUserName?: any;
       decodedUserRole?: any;
       isValid?: any;
+      _id?: any;
    }
 }
 
@@ -64,7 +65,7 @@ export class ValidateToken {
                }
                console.log("JWT", decoded);
                req.decodedUserRole = decoded.userRole;
-               // req.isValid = user?.isValid;
+               req._id = user?._id;
                next();
             }
          );

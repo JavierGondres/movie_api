@@ -8,11 +8,6 @@ exports.purchaseSchema = [
         .withMessage("userName is required")
         .isString()
         .withMessage("User most be a string"),
-    (0, express_validator_1.body)("_id")
-        .notEmpty()
-        .withMessage("_id is required")
-        .isMongoId()
-        .withMessage("invalid _id"),
     (0, express_validator_1.body)("movieId")
         .notEmpty()
         .withMessage("movieId is required")
@@ -35,11 +30,6 @@ exports.rentalSchema = [
         .withMessage("userName is required")
         .isString()
         .withMessage("User most be a string"),
-    (0, express_validator_1.body)("_id")
-        .notEmpty()
-        .withMessage("_id is required")
-        .isMongoId()
-        .withMessage("invalid _id"),
     (0, express_validator_1.body)("movieId")
         .notEmpty()
         .withMessage("movieId is required")

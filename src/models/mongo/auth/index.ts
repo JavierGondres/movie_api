@@ -89,6 +89,7 @@ export class AuthModel {
 
          const { error, userAccesToken } = await generateJWT({
             userRole: user.userRole,
+            _id: new ObjectId(user._id)
          });
 
          if (error) {
@@ -108,11 +109,6 @@ export class AuthModel {
             };
 
             await this.userSessionsCollection.insertOne(accesToken);
-
-            // await this.userSessionsCollection.updateOne(
-            //    { _id: new ObjectId(user._id) },
-            //    { $push: { userSessions: [accesToken] } }
-            // );
 
          } catch (error) {
             console.log(error);

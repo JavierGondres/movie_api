@@ -53,7 +53,7 @@ class ValidateToken {
                     }
                     console.log("JWT", decoded);
                     req.decodedUserRole = decoded.userRole;
-                    // req.isValid = user?.isValid;
+                    req._id = user === null || user === void 0 ? void 0 : user._id;
                     next();
                 });
             }

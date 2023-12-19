@@ -14,7 +14,14 @@ const enum_1 = require("../../types/enum");
 class RentalController {
     constructor({ rentalModel }) {
         this.rental = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            let { _id, movieId, userName, quantity, rentalPrice, penalty } = req.body;
+            let { movieId, userName, quantity, rentalPrice, penalty } = req.body;
+            const _id = req._id;
+            if (!_id) {
+                return res.status(500).json({
+                    error: true,
+                    message: "Error user id in rental"
+                });
+            }
             let result = {
                 error: false,
                 message: "Something went wrong",
