@@ -4,12 +4,14 @@ import { createAuthRouter } from "./routes/auth";
 import { createMovieRouter } from "./routes/movies";
 import { Database } from "./types/database";
 import { createRentalRouter } from "./routes/rentals";
+import { createPurchaseRouter } from "./routes/purchases";
 // import cors from "cors";
 export const createApp = async ({
    userModel,
    authModel,
    movieModel,
    rentalModel,
+   purchaseModel,
    userSessionCollection
 }: Database) => {
    const app = express();
@@ -35,6 +37,13 @@ export const createApp = async ({
       "/rentals",
       createRentalRouter({
          rentalModel: rentalModel,
+         userSessionCollection: userSessionCollection
+      })
+   );
+   app.use(
+      "/purchases",
+      createPurchaseRouter({
+         purchaseModel: purchaseModel,
          userSessionCollection: userSessionCollection
       })
    );

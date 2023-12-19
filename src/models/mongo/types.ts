@@ -37,3 +37,9 @@ export interface Purchases {
    purchasedDate: Date;
    salePrice: number;
 }
+
+export interface RentalPurchaseDetails
+   extends Partial<Users & Purchases & Movies> {
+   movieId: ObjectId;
+   penalty: number;
+}

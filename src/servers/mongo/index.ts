@@ -6,6 +6,7 @@ import { UserModel } from "../../models/mongo/users";
 import { MongoSingleton } from "../../services/MongoSingleton";
 import { DB, DBCollections } from "../../types/enum";
 import { RentalModel } from "../../models/mongo/rentals";
+import { PurchaseModel } from "../../models/mongo/purchases";
 
 const userCollection = MongoSingleton.getClient()
    .db(DB.movie_api)
@@ -37,7 +38,7 @@ createApp({
    authModel: new AuthModel(userCollection, userSessionCollection),
    movieModel: new MovieModel(movieCollection, moviesLogsCollection),
    rentalModel: new RentalModel(rentalsCollection, new MovieModel(movieCollection, moviesLogsCollection)),
-   purchaseModel: new MovieModel(movieCollection, moviesLogsCollection),
+   purchaseModel: new PurchaseModel(purchasesCollection, new MovieModel(movieCollection, moviesLogsCollection)),
    userCollection: userCollection as unknown as Collection<Document>,
    movieCollection: movieCollection as unknown as Collection<Document>,
    userSessionCollection:

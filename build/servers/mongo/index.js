@@ -7,6 +7,7 @@ const users_1 = require("../../models/mongo/users");
 const MongoSingleton_1 = require("../../services/MongoSingleton");
 const enum_1 = require("../../types/enum");
 const rentals_1 = require("../../models/mongo/rentals");
+const purchases_1 = require("../../models/mongo/purchases");
 const userCollection = MongoSingleton_1.MongoSingleton.getClient()
     .db(enum_1.DB.movie_api)
     .collection(enum_1.DBCollections.USERS);
@@ -30,7 +31,7 @@ const rentalsCollection = MongoSingleton_1.MongoSingleton.getClient()
     authModel: new auth_1.AuthModel(userCollection, userSessionCollection),
     movieModel: new movies_1.MovieModel(movieCollection, moviesLogsCollection),
     rentalModel: new rentals_1.RentalModel(rentalsCollection, new movies_1.MovieModel(movieCollection, moviesLogsCollection)),
-    purchaseModel: new movies_1.MovieModel(movieCollection, moviesLogsCollection),
+    purchaseModel: new purchases_1.PurchaseModel(purchasesCollection, new movies_1.MovieModel(movieCollection, moviesLogsCollection)),
     userCollection: userCollection,
     movieCollection: movieCollection,
     userSessionCollection: userSessionCollection,

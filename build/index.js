@@ -38,8 +38,9 @@ const users_1 = require("./routes/users");
 const auth_1 = require("./routes/auth");
 const movies_1 = require("./routes/movies");
 const rentals_1 = require("./routes/rentals");
+const purchases_1 = require("./routes/purchases");
 // import cors from "cors";
-const createApp = ({ userModel, authModel, movieModel, rentalModel, userSessionCollection }) => __awaiter(void 0, void 0, void 0, function* () {
+const createApp = ({ userModel, authModel, movieModel, rentalModel, purchaseModel, userSessionCollection }) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const app = (0, express_1.default)();
     app.use((0, express_1.json)());
@@ -52,6 +53,10 @@ const createApp = ({ userModel, authModel, movieModel, rentalModel, userSessionC
     }));
     app.use("/rentals", (0, rentals_1.createRentalRouter)({
         rentalModel: rentalModel,
+        userSessionCollection: userSessionCollection
+    }));
+    app.use("/purchases", (0, purchases_1.createPurchaseRouter)({
+        purchaseModel: purchaseModel,
         userSessionCollection: userSessionCollection
     }));
     const PORT = (_a = process.env.PORT) !== null && _a !== void 0 ? _a : 1234;
