@@ -17,10 +17,11 @@ export class RentalModel {
    }
 
    private async insertRental(
-      rentalDetails: RentalPurchaseDetails
+      rentalDetails: RentalPurchaseDetails,
+      movie: Movies | null
    ): Promise<string | null> {
       try {
-         const { _id, userName, quantity, movieId, penalty, rentalPrice } =
+         const { _id, userName, quantity, movieId, rentalPrice } =
             rentalDetails;
 
          const dayToReturnMovie = new Date();
@@ -34,7 +35,7 @@ export class RentalModel {
             rentalDate: new Date(),
             rentalPrice: rentalPrice,
             dayToReturnMovie: dayToReturnMovie,
-            penalty: penalty ?? (rentalPrice ?? 100) / 2,
+            penalty: movie?.penalty,
          };
 
          await this.rentalsCollection.insertOne(rentalObj);
@@ -60,7 +61,7 @@ export class RentalModel {
          return { error: true, message: stockValidationMessage };
       }
 
-      const rentalInsertionMessage = await this.insertRental(rentalDetails);
+      const rentalInsertionMessage = await this.insertRental(rentalDetails, movie);
 
       if (rentalInsertionMessage) {
          return { error: true, message: rentalInsertionMessage };

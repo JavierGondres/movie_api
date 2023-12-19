@@ -16,10 +16,10 @@ class RentalModel {
         this.rentalsCollection = rentalsCollection;
         this.movieModel = movieModel;
     }
-    insertRental(rentalDetails) {
+    insertRental(rentalDetails, movie) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { _id, userName, quantity, movieId, penalty, rentalPrice } = rentalDetails;
+                const { _id, userName, quantity, movieId, rentalPrice } = rentalDetails;
                 const dayToReturnMovie = new Date();
                 dayToReturnMovie.setDate(dayToReturnMovie.getDate() + 20);
                 const rentalObj = {
@@ -30,7 +30,7 @@ class RentalModel {
                     rentalDate: new Date(),
                     rentalPrice: rentalPrice,
                     dayToReturnMovie: dayToReturnMovie,
-                    penalty: penalty !== null && penalty !== void 0 ? penalty : (rentalPrice !== null && rentalPrice !== void 0 ? rentalPrice : 100) / 2,
+                    penalty: movie === null || movie === void 0 ? void 0 : movie.penalty,
                 };
                 yield this.rentalsCollection.insertOne(rentalObj);
                 return null; // No hay error
@@ -50,7 +50,7 @@ class RentalModel {
             if (stockValidationMessage) {
                 return { error: true, message: stockValidationMessage };
             }
-            const rentalInsertionMessage = yield this.insertRental(rentalDetails);
+            const rentalInsertionMessage = yield this.insertRental(rentalDetails, movie);
             if (rentalInsertionMessage) {
                 return { error: true, message: rentalInsertionMessage };
             }
