@@ -5,6 +5,8 @@ import { ValidateToken } from "../../middleware/verifyJWT";
 import { isAdmin } from "../../middleware/isAdmin";
 import { Database } from "../../types/database";
 import { Roles } from "../../types/enum";
+import { validateData } from "../../middleware/validateData";
+import { likeSchema } from "../../models/mongo/users/schema";
 
 export const createUserRouter = ({
    userModel,
@@ -27,7 +29,7 @@ export const createUserRouter = ({
 
    usersRouter.patch(
       "/like",
-      [validateToken.validateToken, isAdmin([Roles.ADMIN, Roles.USER])],
+      [validateData(likeSchema),validateToken.validateToken, isAdmin([Roles.ADMIN, Roles.USER])],
       usersController.likeMovie
    );
 

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rentalSchema = exports.purchaseSchema = void 0;
+exports.likeSchema = exports.rentalSchema = exports.purchaseSchema = void 0;
 const express_validator_1 = require("express-validator");
 exports.purchaseSchema = [
     (0, express_validator_1.body)("movieId")
@@ -29,4 +29,11 @@ exports.rentalSchema = [
         .isNumeric()
         .withMessage("Invalid quantity")
         .optional()
+];
+exports.likeSchema = [
+    (0, express_validator_1.body)("_id")
+        .notEmpty()
+        .withMessage("_id is required")
+        .isMongoId()
+        .withMessage("invalid _id"),
 ];

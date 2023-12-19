@@ -29,3 +29,12 @@ export const rentalSchema = [
       .withMessage("Invalid quantity")
       .optional()
 ];
+
+
+export const likeSchema = [
+   body("_id")
+   .notEmpty()
+   .withMessage("_id is required")
+   .isMongoId()
+   .withMessage("invalid _id"),
+]
