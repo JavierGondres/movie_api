@@ -51,8 +51,10 @@ export class MovieController {
    };
 
    updateMovie = async (req: Request, res: Response) => {
+
+      const { id } = req.params
+
       const {
-         _id,
          availability,
          description,
          imageURL,
@@ -61,6 +63,7 @@ export class MovieController {
          stock,
          title,
       } = req.body;
+
 
       let result: {
          error: boolean;
@@ -95,7 +98,7 @@ export class MovieController {
          movieObj = { ...commonProperties };
       }
       try {
-         result = await this.movieModel.updateMovie(_id, movieObj);
+         result = await this.movieModel.updateMovie(id, movieObj);
 
          if (result.error) return res.status(400).json(result);
          return res.status(200).json(result.message);

@@ -29,7 +29,7 @@ export const createMovieRouter = ({
       movieController.createMovie
    );
    movieRouter.put(
-      "/",
+      "/:id",
       validateData(updateMovieSchema),
       validateToken.validateToken,
       isAdmin([Roles.ADMIN]),

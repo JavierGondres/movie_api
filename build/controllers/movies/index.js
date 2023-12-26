@@ -41,7 +41,8 @@ class MovieController {
             }
         });
         this.updateMovie = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { _id, availability, description, imageURL, rentalPrice, salePrice, stock, title, } = req.body;
+            const { id } = req.params;
+            const { availability, description, imageURL, rentalPrice, salePrice, stock, title, } = req.body;
             let result = {
                 error: false,
                 message: "Something went wrong",
@@ -65,7 +66,7 @@ class MovieController {
                 movieObj = Object.assign({}, commonProperties);
             }
             try {
-                result = yield this.movieModel.updateMovie(_id, movieObj);
+                result = yield this.movieModel.updateMovie(id, movieObj);
                 if (result.error)
                     return res.status(400).json(result);
                 return res.status(200).json(result.message);

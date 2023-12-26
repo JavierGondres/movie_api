@@ -43,10 +43,4 @@ export const movieSchema = [
       .withMessage("title is required"),
 ];
 
-export const updateMovieSchema: ValidationChain[] = movieSchema.concat([
-   body("_id")
-     .isMongoId()
-     .withMessage("_id is required")
-     .notEmpty()
-     .withMessage("_id is required"),
- ]);
+export const updateMovieSchema: ValidationChain[] = movieSchema.concat([]);

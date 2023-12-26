@@ -18,7 +18,7 @@ const createMovieRouter = ({ movieModel, userSessionCollection, }) => {
         validateToken.validateToken,
         (0, isAdmin_1.isAdmin)([enum_1.Roles.ADMIN]),
     ], movieController.createMovie);
-    movieRouter.put("/", (0, validateData_1.validateData)(schema_1.updateMovieSchema), validateToken.validateToken, (0, isAdmin_1.isAdmin)([enum_1.Roles.ADMIN]), movieController.updateMovie);
+    movieRouter.put("/:id", (0, validateData_1.validateData)(schema_1.updateMovieSchema), validateToken.validateToken, (0, isAdmin_1.isAdmin)([enum_1.Roles.ADMIN]), movieController.updateMovie);
     movieRouter.get("/", validateToken.validateToken, movieController.getAll);
     return movieRouter;
 };

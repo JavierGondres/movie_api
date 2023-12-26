@@ -44,10 +44,4 @@ exports.movieSchema = [
         .notEmpty()
         .withMessage("title is required"),
 ];
-exports.updateMovieSchema = exports.movieSchema.concat([
-    (0, express_validator_1.body)("_id")
-        .isMongoId()
-        .withMessage("_id is required")
-        .notEmpty()
-        .withMessage("_id is required"),
-]);
+exports.updateMovieSchema = exports.movieSchema.concat([]);
