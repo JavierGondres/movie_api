@@ -112,61 +112,70 @@ class MovieModel {
             }
         });
     }
-    getAll(filterByAvailability, sortBy, title, page, perPage, sortOrder, sortProps, exclusions) {
+    getAll(filterByAvailability, sortBy = "title", title, page = 1, perPage = 10, sortOrder = "asc", sortProps, exclusions) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let query = {};
-                let sort = {
-                    title: sortOrder === "desc" ? -1 : 1,
-                };
-                if (filterByAvailability === "available") {
-                    query.availability = true;
-                }
-                else if (filterByAvailability === "unavailable") {
-                    query.availability = false;
-                }
-                // Ordenar por título por defecto
-                if (sortBy === "popularity") {
-                    sort = { likes: sortOrder === "desc" ? -1 : 1 }; // Ordenar por popularidad (likes)
-                }
-                if (sortProps) {
-                    sort = { [sortProps]: sortOrder === "desc" ? -1 : 1 }; // Ordenar por popularidad (likes)
-                }
-                if (title) {
-                    query.title = { $regex: title, $options: "i" };
-                }
-                if (!perPage)
-                    perPage = 10;
-                if (!page)
-                    page = 1;
-                const skip = (page - 1) * perPage;
-                let formattedExclusions = {}; // Asegurar que formattedExclusions acepta índices de tipo cadena
-                if (exclusions) {
-                    exclusions
-                        .trim()
-                        .split(",")
-                        .forEach((exclusion) => {
-                        formattedExclusions[exclusion] = 0;
-                    });
-                }
+                const query = this.buildQuery(filterByAvailability, title);
+                const sort = this.buildSort(sortBy, sortOrder, sortProps);
+                const { skip, limit } = this.calculateSkipAndLimit(page, perPage);
+                const formattedExclusions = this.buildFormattedExclusions(exclusions);
                 console.log("Exclude:  ", formattedExclusions);
                 console.log("Query", query);
                 console.log("Sort", sort);
-                // Obtener resultados
                 const movies = yield this.movieCollection
                     .find(query)
                     .project(formattedExclusions)
                     .sort(sort)
                     .skip(skip)
-                    .limit(perPage)
+                    .limit(limit)
                     .toArray();
                 return movies;
             }
             catch (error) {
-                console.log(error);
+                console.error("Error in getAll:", error);
                 return null;
             }
         });
+    }
+    buildQuery(filterByAvailability, title) {
+        const query = {};
+        if (filterByAvailability === "available") {
+            query.availability = true;
+        }
+        else if (filterByAvailability === "unavailable") {
+            query.availability = false;
+        }
+        if (title) {
+            query.title = { $regex: title, $options: "i" };
+        }
+        return query;
+    }
+    buildSort(sortBy, sortOrder, sortProps) {
+        let sort = {};
+        if (sortBy === "popularity") {
+            sort = { likes: sortOrder === "desc" ? -1 : 1 };
+        }
+        if (sortProps) {
+            sort = { [sortProps]: sortOrder === "desc" ? -1 : 1 };
+        }
+        return sort;
+    }
+    calculateSkipAndLimit(page, perPage) {
+        const skip = (page - 1) * perPage;
+        const limit = perPage;
+        return { skip, limit };
+    }
+    buildFormattedExclusions(exclusions) {
+        const formattedExclusions = {};
+        if (exclusions) {
+            exclusions
+                .trim()
+                .split(",")
+                .forEach((exclusion) => {
+                formattedExclusions[exclusion] = 0;
+            });
+        }
+        return formattedExclusions;
     }
     validateMovieExistence(movieId) {
         return __awaiter(this, void 0, void 0, function* () {

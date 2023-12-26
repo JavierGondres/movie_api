@@ -142,71 +142,90 @@ export class MovieModel {
 
    async getAll(
       filterByAvailability?: string,
-      sortBy?: "title" | "popularity",
+      sortBy: "title" | "popularity" = "title",
       title?: string,
-      page?: number,
-      perPage?: number,
-      sortOrder?: "asc" | "desc",
+      page: number = 1,
+      perPage: number = 10,
+      sortOrder: "asc" | "desc" = "asc",
       sortProps?: string,
       exclusions?: string
    ) {
       try {
-         let query: Record<string, any> = {};
-         let sort: Record<string, any> = {
-            title: sortOrder === "desc" ? -1 : 1,
-         };
-
-         if (filterByAvailability === "available") {
-            query.availability = true;
-         } else if (filterByAvailability === "unavailable") {
-            query.availability = false;
-         }
-
-         // Ordenar por título por defecto
-         if (sortBy === "popularity") {
-            sort = { likes: sortOrder === "desc" ? -1 : 1 }; // Ordenar por popularidad (likes)
-         }
-
-         if (sortProps) {
-            sort = { [sortProps]: sortOrder === "desc" ? -1 : 1 }; // Ordenar por popularidad (likes)
-         }
-
-         if (title) {
-            query.title = { $regex: title, $options: "i" };
-         }
-
-         if (!perPage) perPage = 10;
-         if (!page) page = 1;
-
-         const skip = (page - 1) * perPage;
-
-         let formattedExclusions: Record<string, any> = {}; // Asegurar que formattedExclusions acepta índices de tipo cadena
-         if (exclusions) {
-            exclusions
-               .trim()
-               .split(",")
-               .forEach((exclusion) => {
-                  formattedExclusions[exclusion] = 0;
-               });
-         }
+         const query = this.buildQuery(filterByAvailability, title);
+         const sort = this.buildSort(sortBy, sortOrder, sortProps);
+   
+         const { skip, limit } = this.calculateSkipAndLimit(page, perPage);
+   
+         const formattedExclusions = this.buildFormattedExclusions(exclusions);
+   
          console.log("Exclude:  ", formattedExclusions);
          console.log("Query", query);
          console.log("Sort", sort);
-
-         // Obtener resultados
+   
          const movies = await this.movieCollection
             .find(query)
             .project(formattedExclusions)
             .sort(sort)
             .skip(skip)
-            .limit(perPage)
+            .limit(limit)
             .toArray();
-
+   
          return movies;
       } catch (error) {
-         console.log(error);
+         console.error("Error in getAll:", error);
          return null;
       }
+   }
+   
+   private buildQuery(filterByAvailability?: string, title?: string) {
+      const query: Record<string, any> = {};
+   
+      if (filterByAvailability === "available") {
+         query.availability = true;
+      } else if (filterByAvailability === "unavailable") {
+         query.availability = false;
+      }
+   
+      if (title) {
+         query.title = { $regex: title, $options: "i" };
+      }
+   
+      return query;
+   }
+   
+   private buildSort(sortBy: "title" | "popularity", sortOrder: "asc" | "desc", sortProps?: string) {
+      let sort: Record<string, any> = {};
+   
+      if (sortBy === "popularity") {
+         sort = { likes: sortOrder === "desc" ? -1 : 1 };
+      }
+   
+      if (sortProps) {
+         sort = { [sortProps]: sortOrder === "desc" ? -1 : 1 };
+      }
+   
+      return sort;
+   }
+   
+   private calculateSkipAndLimit(page: number, perPage: number) {
+      const skip = (page - 1) * perPage;
+      const limit = perPage;
+      return { skip, limit };
+   }
+   
+   private buildFormattedExclusions(exclusions?: string) {
+      const formattedExclusions: Record<string, any> = {};
+   
+      if (exclusions) {
+         exclusions
+            .trim()
+            .split(",")
+            .forEach((exclusion) => {
+               formattedExclusions[exclusion] = 0;
+            });
+      }
+   
+      return formattedExclusions;
    }
 
    async validateMovieExistence(movieId: ObjectId): Promise<Movies | null> {
@@ -278,7 +297,7 @@ export class MovieModel {
 
       return existMovie;
    }
-   
+
    async likeMovie(_id: ObjectId) {
       let message;
       try {
