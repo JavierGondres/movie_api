@@ -112,7 +112,7 @@ class MovieModel {
             }
         });
     }
-    getAll(filterByAvailability, sortBy, title, page, perPage, sortOrder) {
+    getAll(filterByAvailability, sortBy, title, page, perPage, sortOrder, sortProps, exclusions) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let query = {};
@@ -129,6 +129,9 @@ class MovieModel {
                 if (sortBy === "popularity") {
                     sort = { likes: sortOrder === "desc" ? -1 : 1 }; // Ordenar por popularidad (likes)
                 }
+                if (sortProps) {
+                    sort = { [sortProps]: sortOrder === "desc" ? -1 : 1 }; // Ordenar por popularidad (likes)
+                }
                 if (title) {
                     query.title = { $regex: title, $options: "i" };
                 }
@@ -137,11 +140,22 @@ class MovieModel {
                 if (!page)
                     page = 1;
                 const skip = (page - 1) * perPage;
+                let formattedExclusions = {}; // Asegurar que formattedExclusions acepta índices de tipo cadena
+                if (exclusions) {
+                    exclusions
+                        .trim()
+                        .split(",")
+                        .forEach((exclusion) => {
+                        formattedExclusions[exclusion] = 0;
+                    });
+                }
+                console.log("Exclude:  ", formattedExclusions);
                 console.log("Query", query);
                 console.log("Sort", sort);
                 // Obtener resultados
                 const movies = yield this.movieCollection
                     .find(query)
+                    .project(formattedExclusions)
                     .sort(sort)
                     .skip(skip)
                     .limit(perPage)
@@ -152,20 +166,6 @@ class MovieModel {
                 console.log(error);
                 return null;
             }
-        });
-    }
-    findMovieByTitle({ title }) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const existMovie = yield this.movieCollection.findOne({
-                title: title,
-            });
-            return existMovie;
-        });
-    }
-    findMovie(obj) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const existMovie = yield this.movieCollection.findOne(obj);
-            return existMovie;
         });
     }
     validateMovieExistence(movieId) {
@@ -215,6 +215,20 @@ class MovieModel {
                 console.log(error);
                 return "Error updating stock";
             }
+        });
+    }
+    findMovieByTitle({ title }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const existMovie = yield this.movieCollection.findOne({
+                title: title,
+            });
+            return existMovie;
+        });
+    }
+    findMovie(obj) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const existMovie = yield this.movieCollection.findOne(obj);
+            return existMovie;
         });
     }
     likeMovie(_id) {

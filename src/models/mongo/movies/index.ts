@@ -89,7 +89,7 @@ export class MovieModel {
          }
 
          try {
-            const { title, rentalPrice, salePrice, lastModifiedDate} =
+            const { title, rentalPrice, salePrice, lastModifiedDate } =
                movieObj;
             if (title || rentalPrice || salePrice) {
                const movieLog: Partial<Movies & { movieId?: ObjectId }> = {
@@ -103,10 +103,10 @@ export class MovieModel {
                //debo separar la logica aqui y modularizar mas
                await this.moviesLogsCollection.insertOne(movieLog);
                const latestMovieLogs = await this.moviesLogsCollection
-               .find({movieId: new ObjectId(_id as unknown as ObjectId)})
-               .sort({ lastModifiedDate: -1 }) 
-               .limit(5)
-               .toArray();
+                  .find({ movieId: new ObjectId(_id as unknown as ObjectId) })
+                  .sort({ lastModifiedDate: -1 })
+                  .limit(5)
+                  .toArray();
 
                console.log(latestMovieLogs);
 
@@ -146,7 +146,9 @@ export class MovieModel {
       title?: string,
       page?: number,
       perPage?: number,
-      sortOrder?: "asc" | "desc"
+      sortOrder?: "asc" | "desc",
+      sortProps?: string,
+      exclusions?: string
    ) {
       try {
          let query: Record<string, any> = {};
@@ -165,6 +167,10 @@ export class MovieModel {
             sort = { likes: sortOrder === "desc" ? -1 : 1 }; // Ordenar por popularidad (likes)
          }
 
+         if (sortProps) {
+            sort = { [sortProps]: sortOrder === "desc" ? -1 : 1 }; // Ordenar por popularidad (likes)
+         }
+
          if (title) {
             query.title = { $regex: title, $options: "i" };
          }
@@ -174,12 +180,23 @@ export class MovieModel {
 
          const skip = (page - 1) * perPage;
 
+         let formattedExclusions: Record<string, any> = {}; // Asegurar que formattedExclusions acepta índices de tipo cadena
+         if (exclusions) {
+            exclusions
+               .trim()
+               .split(",")
+               .forEach((exclusion) => {
+                  formattedExclusions[exclusion] = 0;
+               });
+         }
+         console.log("Exclude:  ", formattedExclusions);
          console.log("Query", query);
          console.log("Sort", sort);
 
          // Obtener resultados
          const movies = await this.movieCollection
             .find(query)
+            .project(formattedExclusions)
             .sort(sort)
             .skip(skip)
             .limit(perPage)
@@ -190,20 +207,6 @@ export class MovieModel {
          console.log(error);
          return null;
       }
-   }
-
-   async findMovieByTitle({ title }: { title: string }) {
-      const existMovie = await this.movieCollection.findOne({
-         title: title,
-      });
-
-      return existMovie;
-   }
-
-   async findMovie(obj: object) {
-      const existMovie = await this.movieCollection.findOne(obj);
-
-      return existMovie;
    }
 
    async validateMovieExistence(movieId: ObjectId): Promise<Movies | null> {
@@ -262,6 +265,20 @@ export class MovieModel {
       }
    }
 
+   async findMovieByTitle({ title }: { title: string }) {
+      const existMovie = await this.movieCollection.findOne({
+         title: title,
+      });
+
+      return existMovie;
+   }
+
+   async findMovie(obj: object) {
+      const existMovie = await this.movieCollection.findOne(obj);
+
+      return existMovie;
+   }
+   
    async likeMovie(_id: ObjectId) {
       let message;
       try {

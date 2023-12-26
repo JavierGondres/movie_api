@@ -111,12 +111,10 @@ export class MovieController {
    getAll = async (req: Request, res: Response) => {
       let message;
       try {
-         let { filterByAvailability, sortBy, title, page, perPage, sortOrder } = req.query;
+         let { filterByAvailability, sortBy, title, page, perPage, sortOrder, sortProps, exclusions } = req.query;
 
          if (req.decodedUserRole === Roles.USER || !req.decodedUserRole)
             filterByAvailability = "available";
-
-         console.log(perPage)
 
          const movies = await this.movieModel.getAll(
             filterByAvailability,
@@ -124,7 +122,9 @@ export class MovieController {
             title,
             Number(page),
             Number(perPage),
-            sortOrder
+            sortOrder,
+            sortProps,
+            exclusions
          );
 
          if (!movies) {

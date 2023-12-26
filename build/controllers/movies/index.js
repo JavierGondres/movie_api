@@ -79,11 +79,10 @@ class MovieController {
         this.getAll = (req, res) => __awaiter(this, void 0, void 0, function* () {
             let message;
             try {
-                let { filterByAvailability, sortBy, title, page, perPage, sortOrder } = req.query;
+                let { filterByAvailability, sortBy, title, page, perPage, sortOrder, sortProps, exclusions } = req.query;
                 if (req.decodedUserRole === enum_1.Roles.USER || !req.decodedUserRole)
                     filterByAvailability = "available";
-                console.log(perPage);
-                const movies = yield this.movieModel.getAll(filterByAvailability, sortBy, title, Number(page), Number(perPage), sortOrder);
+                const movies = yield this.movieModel.getAll(filterByAvailability, sortBy, title, Number(page), Number(perPage), sortOrder, sortProps, exclusions);
                 if (!movies) {
                     message = "Error al obtener peliculas";
                     return res.status(500).json({
